@@ -1,0 +1,6 @@
+---
+const item:GameListItem = Astro.props.item
+---
+<li class="game-entry"><img src="/img/apple.png" alt="Game">
+	<p><a href={item.link}>{item.name}</a> - {item.newShortDesc?item.newShortDesc:item.shortDesc}</p>
+</li>

@@ -1,0 +1,164 @@
+:root {
+	--dark-gray: #666666;
+	--med-gray: #999999;
+	--bg-gray: #c0c0c0;
+	--contents-width: 50%;
+}
+
+body {
+	background: black;
+	font-family: Helvetica Arial, sans-serif;
+}
+
+.page-contents {
+	width: var(--contents-width);
+	margin: 0 auto;
+	background: var(--dark-gray);
+	border-radius: 1em;
+	border: 1px solid var(--med-gray);
+	border-bottom: 1px solid black;
+}
+
+header {
+	text-align: center;
+	display: inline-block;
+	width: 100%;
+}
+
+.banner {
+	height: 4em;
+	display: inline-grid;
+	grid-template-columns: auto 1fr;
+	margin: 0 auto;
+	color: white;
+	font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.site-title {
+	text-transform: uppercase;
+}
+
+.site-title, header p {
+	margin: 0;
+}
+
+.logo {
+	grid-row: span 2;
+	vertical-align: middle;
+	margin: 0 0.5em;
+}
+
+nav.tabbar {
+	margin-top:0.5em;
+}
+
+nav.tabbar ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+nav.tabbar li {
+	float: left;
+	display: block;
+	padding: 0.2em 0.8em;
+	color: white;
+	background: var(--med-gray);
+	margin: 0 0;
+	border: 1px solid white;
+	border-right: 2px solid black;
+	border-top-left-radius: 1em;
+	border-top-right-radius: 1em;
+}
+header {
+	border-bottom: 0.25em solid white;
+}
+
+nav.tabbar li.tab.tab-active {
+	background: white;
+}
+
+nav.tabbar li a, nav.tabbar li a:visited {
+	color: black;
+	text-decoration: none;
+}
+
+main, .page-title {
+	background: var(--bg-gray);
+}
+
+main {
+	padding: 0.5em;
+}
+
+.page-title {
+	margin: 0;
+	text-align: center;
+}
+
+div.gray-bar-container {
+	width: 100%;
+}
+
+div.gray-bar-container .gray-bar {
+	background-color: var(--dark-gray);
+	color: white;
+	border-radius: 2em;
+	padding: 0.2em 0.5em;
+	font-size: 1.5em;
+}
+
+a {
+	color: var(--dark-gray);
+}
+
+main > *:first-child {
+	margin-top: 0.5em;
+}
+
+.text-bold {
+	font-weight: bold;
+}
+
+footer {
+	color: white;
+	text-align: center;
+}
+
+footer a {
+	color: white;
+	text-decoration: none;
+	font-weight: bold;
+	padding: 0.25em;
+	display: inline-block;
+}
+
+.games-list {
+	padding: 0 0.5em;
+}
+.game-entry {
+	display: grid;
+	list-style: none;
+	grid-template-columns: min-content 1fr;
+	column-gap: 0.25em;
+	grid-template-rows: 1fr;
+}
+.game-entry p {
+	margin: auto 0;
+}
+section#gameplay-area {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+canvas.main-canvas {
+	display: inline-block;
+	margin: 0 auto;
+	image-rendering: crisp-edges;
+}
+
+.grayscale {
+	filter: grayscale();
+}

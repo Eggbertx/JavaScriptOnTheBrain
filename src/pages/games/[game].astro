@@ -1,0 +1,27 @@
+---
+import path from "path";
+import gamesList from "../../data/games.json";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export function getStaticPaths() {
+	return gamesList.map(game => {
+		return {
+			params: { game: path.basename(game.link).replaceAll(".html", "") },
+		};
+	});
+}
+
+const activeGame:GameListItem|undefined = (gamesList as GameListItem[]).find(game =>
+	path.basename(game.link).replaceAll(".html", "") === Astro.params.game);
+
+if(!activeGame) {
+	throw new Error(`Game not found: ${Astro.params.game}`);
+}
+activeGame.gameScripts = activeGame.gameScripts ?? [];
+---
+<BaseLayout activePage={"/games.html"} pageTitle={activeGame?.name} gameScripts={activeGame.gameScripts} hasTitleHeader={true}>
+	<section id="gameplay-area"></section>
+	{activeGame && 
+		<p set:html={activeGame.gamePageDescriptionHTML}></p>
+	}
+</BaseLayout>

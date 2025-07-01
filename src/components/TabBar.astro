@@ -1,0 +1,18 @@
+---
+const activePage:string = Astro.props.activePage ?? "";
+
+const links = [
+	{ href: "/", text: "Intro" },
+	{ href: "/games.html", text: "Games" },
+	{ href: "/goals.html", text: "Goals" },
+	{ href: "/feedback.html", text: "Feedback" },
+	{ href: "/links.html", text: "Links" },
+];
+---
+<nav class="tabbar">
+	<ul>
+		{links.map(link => (
+			<li class={(link.href === activePage) ? "tab tab-active" : "tab"}><a href={link.href} >{link.text}</a></li>
+		))}
+	</ul>
+</nav>

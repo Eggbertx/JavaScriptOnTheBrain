@@ -1,0 +1,40 @@
+---
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+
+import "../styles/main.css";
+
+const siteTitle:string = "JavaScript on the Brain";
+let pageTitle:string|null = Astro.props.pageTitle ?? null;
+const activePage:string = Astro.props.activePage ?? "/";
+
+const titleElem = pageTitle? `${pageTitle} - ${siteTitle}` : siteTitle;
+const gameScripts:RuntimeScript[] = Astro.props.gameScripts ?? [];
+
+if(!pageTitle)
+	pageTitle = siteTitle;
+
+const hasTitleHeader = Astro.props.hasTitleHeader ?? false;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" href="/img/favicon.png" type="image/png">
+	<title>{titleElem}</title>
+	{gameScripts.map(script => (
+		<script src={script.src} async={script.async} defer={script.defer} type={script.type ?? "text/javascript"} is:inline></script>
+	))}
+</head>
+<body>
+	<article class="page-contents">
+		<Header activePage={activePage} />
+		<main>
+			{hasTitleHeader && pageTitle && <h2 class="page-title">{pageTitle}</h2>}
+			<slot />
+		</main>
+		<Footer />
+	</article>
+</body>
+</html>
