@@ -23,7 +23,7 @@
 		"shortDesc": "the fly-eating frog decoration on my main page. This was a test of threads and animation.",
 		"newShortDesc": "the fly-eating from decoration on the main page. This is a canvas animation of a frog that eats flies that fly around randomly.",
 		"gamePageDescriptionHTML": "The frog has been painted green and updated with an optional background color parameter. For example, &lt;param name=\"bgcolor\" value=\"#a000ff\"&gt; sets the background to blueish purple. Default is light gray.",
-		"newGamePageDescriptionHTML": "This animation slices up the original image into sub-images, using  The frog has been painted green and updated with an optional background color parameter. For example, &lt;param name=\"bgcolor\" value=\"#a000ff\"&gt; sets the background to blueish purple. Default is light gray.",
+		"newGamePageDescriptionHTML": "This animation slices up the original image into sub-images for things like the frog, its face, and the flies. A background color can be set by altering the CSS background/background-color value. The animation on the front page uses the same script, but has a grayscale CSS filter applied.",
 		"gameScripts": [
 			{"src":"/js/lightsnack.js", "defer": true}
 		]

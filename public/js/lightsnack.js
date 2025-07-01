@@ -14,7 +14,7 @@ if (!cnv) {
 cnv.width = 400;
 cnv.height = 60;
 
-const debug = true;
+const debug = window.debugGames || false;
 
 /** @type {CanvasRenderingContext2D} */
 const ctx = cnv.getContext("2d");
