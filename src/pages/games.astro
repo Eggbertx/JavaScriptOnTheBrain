@@ -1,11 +1,14 @@
 ---
+import path from "path";
 import GrayBar from "../components/GrayBar.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import games from "../data/games.json";
 import GameListEntry from "../components/GameListEntry.astro";
+
+const basePath = import.meta.env.BASE_URL ?? "/";
 ---
 
-<BaseLayout activePage="/games.html" pageTitle="Games">
+<BaseLayout activePage={path.join(basePath,"/games.html")} pageTitle="Games">
 	<p>The below games are based on the ones hosted on <a href="http://javaonthebrain.com/">Java on the Brain</a>, reimplemented in JavaScript using canvas and other modern JavaScript and CSS standards, so that they can be realistically run in browsers released in the last couple decades</p>
 	<p>All of my implementations are distributed freely and are not being done for profit.</p>
 	<GrayBar text="Games" />

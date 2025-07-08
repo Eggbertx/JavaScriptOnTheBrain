@@ -1,12 +1,14 @@
 ---
+import path from "path";
+const basePath = import.meta.env.BASE_URL ?? "/";
 const activePage:string = Astro.props.activePage ?? "";
 
 const links = [
-	{ href: "/", text: "Intro" },
-	{ href: "/games.html", text: "Games" },
-	{ href: "/goals.html", text: "Goals" },
-	{ href: "/feedback.html", text: "Feedback" },
-	{ href: "/links.html", text: "Links" },
+	{ href: path.join(basePath, "/"), text: "Intro" },
+	{ href: path.join(basePath, "/games.html"), text: "Games" },
+	{ href: path.join(basePath, "/goals.html"), text: "Goals" },
+	{ href: path.join(basePath, "/feedback.html"), text: "Feedback" },
+	{ href: path.join(basePath, "/links.html"), text: "Links" },
 ];
 ---
 <nav class="tabbar">

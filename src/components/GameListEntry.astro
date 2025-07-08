@@ -1,6 +1,9 @@
 ---
+import path from "path";
+
+const basePath = import.meta.env.BASE_URL ?? "/";
 const item:GameListItem = Astro.props.item
 ---
-<li class="game-entry"><img src="/img/apple.png" alt="Game">
+<li class="game-entry"><img src={path.join(basePath,"/img/apple.png")} alt="Game">
 	<p><a href={item.link}>{item.name}</a> - {item.newShortDesc?item.newShortDesc:item.shortDesc}</p>
 </li>
