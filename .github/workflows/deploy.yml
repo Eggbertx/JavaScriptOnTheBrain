@@ -23,7 +23,7 @@ jobs:
         uses: withastro/action@v3
     env:
       # Set the environment variable SECRET to the value of the secret named SECRET
-      BASE_PATH: ${{ env.BASE_PATH || "/" }}
+      BASE_PATH: ${{ env.BASE_PATH }}
   deploy:
     needs: build
     runs-on: ubuntu-latest
