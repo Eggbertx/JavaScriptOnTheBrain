@@ -1,13 +1,22 @@
 :root {
+	--darker-gray: #333333;
 	--dark-gray: #666666;
 	--med-gray: #999999;
 	--bg-gray: #c0c0c0;
 	--contents-width: 50%;
+	--title-font-family: 'Rockin Record', Impact, 'Arial Narrow Bold', sans-serif;
+	--sans-font-family: Helvetica, Arial, sans-serif;
 }
+
+@font-face {
+	font-family: 'Rockin Record';
+	src: url('/fonts/gomarice_rockin_record.ttf');
+	font-weight: normal;
+}
+
 
 body {
 	background: black;
-	font-family: Helvetica Arial, sans-serif;
 }
 
 .page-contents {
@@ -29,9 +38,10 @@ header {
 	height: 4em;
 	display: inline-grid;
 	grid-template-columns: auto 1fr;
-	margin: 0 auto;
+	margin: 0.2em auto 0;
 	color: white;
-	font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+	filter: drop-shadow(2px 2px 0 black);
+	font-family: var(--title-font-family);
 }
 
 .site-title {
@@ -50,6 +60,7 @@ header {
 
 nav.tabbar {
 	margin-top:0.5em;
+	font-family: var(--sans-font-family);
 }
 
 nav.tabbar ul {
@@ -98,6 +109,7 @@ main {
 
 div.gray-bar-container {
 	width: 100%;
+	font-family: var(--sans-font-family);
 }
 
 div.gray-bar-container .gray-bar {
@@ -111,6 +123,9 @@ div.gray-bar-container .gray-bar {
 a {
 	color: var(--dark-gray);
 }
+a:visited {
+	color: var(--darker-gray);
+}
 
 main > *:first-child {
 	margin-top: 0.5em;
@@ -123,6 +138,7 @@ main > *:first-child {
 footer {
 	color: white;
 	text-align: center;
+	font-family: var(--sans-font-family);
 }
 
 footer a {
