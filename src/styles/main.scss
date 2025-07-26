@@ -8,14 +8,14 @@
 	--sans-font-family: Helvetica, Arial, sans-serif;
 }
 
-@font-face {
-	font-family: 'Rockin Record';
-	src: url('/fonts/gomarice_rockin_record.ttf');
-	font-weight: normal;
-}
-
 body {
 	background: black;
+}
+
+@font-face {
+	font-family: 'Rockin Record';
+	src: url("#{$base-path}/fonts/gomarice_rockin_record.ttf");
+	font-weight: normal;
 }
 
 .page-contents {
@@ -176,5 +176,5 @@ canvas.main-canvas {
 }
 
 .grayscale {
-	filter: grayscale();
+	filter: grayscale(1);
 }

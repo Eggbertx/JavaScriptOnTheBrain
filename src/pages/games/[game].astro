@@ -3,7 +3,7 @@ import path from "path";
 import gamesListImport from "../../data/games.json";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
-const basePath = import.meta.env.BASE_URL ?? "/";
+const basePath = import.meta.env.BASE_PATH ?? "/";
 
 const gamesList:GameListItem[] = gamesListImport.map(game => {
 	if(!game.link) {
@@ -19,7 +19,8 @@ const gamesList:GameListItem[] = gamesListImport.map(game => {
 			}
 			return {
 				...script,
-				src: script.src.startsWith("http") ? script.src : path.join(basePath, script.src)
+				src: script.src
+				//src: script.src.startsWith("http") ? script.src : path.join(basePath, script.src)
 			};
 		}),
 		gameID: path.basename(game.link).replaceAll(".html", ""),
