@@ -5,10 +5,10 @@ import Header from "../components/Header.astro";
 
 import "../styles/main.scss";
 
-const basePath = import.meta.env.BASE_PATH ?? "/";
+const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
 const siteTitle:string = "JavaScript on the Brain";
 let pageTitle:string|null = Astro.props.pageTitle ?? null;
-const activePage:string = Astro.props.activePage ?? "/";
+const activePage:string = Astro.props.activePage ?? "/JavaScriptOnTheBrain";
 
 const titleElem = pageTitle? `${pageTitle} - ${siteTitle}` : siteTitle;
 const gameScripts:RuntimeScript[] = Astro.props.gameScripts ?? [];

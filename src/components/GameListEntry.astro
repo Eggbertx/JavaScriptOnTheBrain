@@ -1,7 +1,7 @@
 ---
 import path from "path";
 
-const basePath = import.meta.env.BASE_PATH ?? "/";
+const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
 const item:GameListItem = Astro.props.item
 ---
 <li class="game-entry"><img src={path.join(basePath,"/img/apple.png")} alt="Game">

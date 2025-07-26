@@ -3,7 +3,7 @@ import path from "path";
 import gamesListImport from "../../data/games.json";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
-const basePath = import.meta.env.BASE_PATH ?? "/";
+const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
 
 const gamesList:GameListItem[] = gamesListImport.map(game => {
 	if(!game.link) {
