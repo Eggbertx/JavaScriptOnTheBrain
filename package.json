@@ -1,7 +1,8 @@
 {
-  "name": "",
+  "name": "jsotb-astro",
   "type": "module",
   "version": "0.0.1",
+  "types": "src/types/types.d.ts",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -9,7 +10,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.12.3",
-    "sass": "^1.89.2"
+    "astro": "^5.13.7",
+    "sass": "^1.92.1"
   }
 }
