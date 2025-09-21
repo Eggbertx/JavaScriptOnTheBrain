@@ -54,7 +54,13 @@ frogBase.onload = () => {
 	dangerX = eatenX + 30; // where the frog's speed increases
 	setInterval(drawCanvas, 1000 / 20); // 5 FPS
 }
-frogBase.src = "/JavaScriptOnTheBrain/img/froggies.gif";
+if(window.JSOTB && window.JSOTB.basePath) {
+	console.log(`Setting frogBase.src to ${window.JSOTB.basePath}/img/froggies.gif`);
+	frogBase.src = window.JSOTB.basePath + "/img/froggies.gif";
+} else {
+	console.log("window.JSOTB not defined, using default path for frogBase.src");
+	frogBase.src = "/JavaScriptOnTheBrain/img/froggies.gif";
+}
 
 
 function randBetween(min, max) {

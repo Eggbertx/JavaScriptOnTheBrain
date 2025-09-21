@@ -6,7 +6,7 @@ import GrayBar from "../components/GrayBar.astro";
 const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
 ---
 
-<BaseLayout activePage="/">
+<BaseLayout activePage={path.join(basePath, "/")}>
 	<section id="gameplay-area" class="grayscale"></section>
 	<script src={path.join(basePath, "/js/lightsnack.js")} is:inline></script>
 	<GrayBar text="Welcome, noble netsurfer!" />

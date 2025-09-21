@@ -2,13 +2,13 @@
 import path from "path";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
-
 import "../styles/main.scss";
 
 const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
 const siteTitle:string = "JavaScript on the Brain";
 let pageTitle:string|null = Astro.props.pageTitle ?? null;
 const activePage:string = Astro.props.activePage ?? "/JavaScriptOnTheBrain";
+const activeTab:ActiveTab = Astro.props.activeTab ?? "none";
 
 const titleElem = pageTitle? `${pageTitle} - ${siteTitle}` : siteTitle;
 const gameScripts:RuntimeScript[] = Astro.props.gameScripts ?? [];
@@ -25,17 +25,20 @@ const hasTitleHeader = Astro.props.hasTitleHeader ?? false;
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="shortcut icon" href={path.join(basePath, "/img/favicon.png")} type="image/png">
 	<title>{titleElem}</title>
-	{gameScripts.length > 0 &&
-		<script define:vars={{basePath}}>
-			window.basePath = basePath;
-		</script>}
+	<script define:vars={{basePath,activePage,activeTab}} is:inline>
+		window.JSOTB = {
+			basePath: basePath,
+			activePage: activePage,
+			activeTab: activeTab,
+		};
+	</script>
 	{gameScripts.map(script => (
 		<script src={path.join(basePath, script.src)} async={script.async} defer={script.defer} type={script.type ?? "text/javascript"} is:inline></script>
 	))}
 </head>
 <body>
 	<article class="page-contents">
-		<Header activePage={activePage} />
+		<Header activePage={activePage} activeTab={activeTab} />
 		<main>
 			{hasTitleHeader && pageTitle && <h2 class="page-title">{pageTitle}</h2>}
 			<slot />

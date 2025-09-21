@@ -1,10 +1,10 @@
 ---
 import Banner from './Banner.astro';
 import TabBar from './TabBar.astro';
-const { siteTitle, activePage } = Astro.props;
+const { siteTitle, activePage, activeTab } = Astro.props;
 ---
 
 <header>
 	<Banner siteTitle={siteTitle} />
-	<TabBar activePage={activePage} />
+	<TabBar activePage={activePage} activeTab={activeTab} />
 </header>

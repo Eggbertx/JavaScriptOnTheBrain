@@ -3,6 +3,7 @@ import path from "path";
 
 const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain/";
 let activePage:string = Astro.props.activePage ?? basePath;
+const activeTab:ActiveTab = Astro.props.activeTab ?? "none";
 if(path.relative(basePath, activePage) === "..") {
 	activePage = path.join(basePath, "/");
 }
@@ -19,7 +20,7 @@ const links = [
 <nav class="tabbar">
 	<ul>
 		{links.map(link => (
-			<li class={(link.href === activePage) ? "tab tab-active" : "tab"}><a href={link.href} >{link.text}</a></li>
+			<li class={(link.href === activePage || (link.text === activeTab)) ? "tab tab-active" : "tab"}><a href={link.href} >{link.text}</a></li>
 		))}
 	</ul>
 </nav>

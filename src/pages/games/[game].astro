@@ -42,13 +42,18 @@ if(!activeGame) {
 }
 const debug = import.meta.env.DEBUG_GAMES?true:false;
 ---
-<BaseLayout activePage={path.join(basePath, "/games.html")} pageTitle={activeGame?.name} gameScripts={activeGame.gameScripts} hasTitleHeader={true}>
-	{debug && <script is:inline>
-		window.debugGames = true;
-	</script>}
-	<section id="gameplay-area"></section>
-	{activeGame.newGamePageDescriptionHTML?
-		<p set:html={activeGame.newGamePageDescriptionHTML.replace("{BASE_PATH}", basePath)}></p>:
-		<p set:html={activeGame.gamePageDescriptionHTML?.replace("{BASE_PATH}", basePath)}></p>
-	}
+<BaseLayout
+	activePage={path.join(basePath, (activeGame?.gameID) ?? "games") + ".html"}
+	pageTitle={activeGame?.name}
+	gameScripts={activeGame.gameScripts}
+	hasTitleHeader={true}
+	activeTab="Games">
+		{debug && <script is:inline>
+			window.debugGames = true;
+		</script>}
+		<section id="gameplay-area"></section>
+		{activeGame.newGamePageDescriptionHTML?
+			<p set:html={activeGame.newGamePageDescriptionHTML.replace("{BASE_PATH}", basePath)}></p>:
+			<p set:html={activeGame.gamePageDescriptionHTML?.replace("{BASE_PATH}", basePath)}></p>
+		}
 </BaseLayout>

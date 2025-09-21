@@ -17,3 +17,18 @@ interface RuntimeScript {
 	async?: boolean;
 	defer?: boolean;
 }
+
+type ActiveTab = "Intro" | "Games" | "Goals" | "Feedback" | "Links" | "none";
+
+interface JSOTBConfig {
+	basePath: string;
+	activePage: string;
+	activeTab: ActiveTab;
+}
+
+declare global {
+	interface Window {
+		debugGames?: boolean;
+		JSOTB: JSOTBConfig;
+	}
+}
