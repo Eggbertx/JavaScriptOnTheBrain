@@ -1,12 +1,10 @@
-:root {
-	--darker-gray: #333333;
-	--dark-gray: #666666;
-	--med-gray: #999999;
-	--bg-gray: #c0c0c0;
-	--contents-width: 50%;
-	--title-font-family: 'Rockin Record', Impact, 'Arial Narrow Bold', sans-serif;
-	--sans-font-family: Helvetica, Arial, sans-serif;
-}
+$darker-gray: #333333;
+$dark-gray: #666666;
+$med-gray: #999999;
+$bg-gray: #c0c0c0;
+$contents-width: 50%;
+$title-font-family: 'Rockin Record', Impact, 'Arial Narrow Bold', sans-serif;
+$sans-font-family: Helvetica, Arial, sans-serif;
 
 body {
 	background: black;
@@ -19,11 +17,11 @@ body {
 }
 
 .page-contents {
-	width: var(--contents-width);
+	width: $contents-width;
 	margin: 0 auto;
-	background: var(--dark-gray);
+	background: $dark-gray;
 	border-radius: 1em;
-	border: 1px solid var(--med-gray);
+	border: 1px solid $med-gray;
 	border-bottom: 1px solid black;
 }
 
@@ -40,7 +38,7 @@ header {
 	margin: 0.2em auto 0;
 	color: white;
 	filter: drop-shadow(2px 2px 0 black);
-	font-family: var(--title-font-family);
+	font-family: $title-font-family;
 }
 
 .site-title {
@@ -59,7 +57,7 @@ header {
 
 nav.tabbar {
 	margin-top:0.5em;
-	font-family: var(--sans-font-family);
+	font-family: $sans-font-family;
 }
 
 nav.tabbar ul {
@@ -73,7 +71,7 @@ nav.tabbar li {
 	display: block;
 	padding: 0.2em 0.8em;
 	color: white;
-	background: var(--med-gray);
+	background: $med-gray;
 	margin: 0 0;
 	border: 1px solid white;
 	border-right: 2px solid black;
@@ -94,7 +92,7 @@ nav.tabbar li a, nav.tabbar li a:visited {
 }
 
 main, .page-title {
-	background: var(--bg-gray);
+	background: $bg-gray;
 }
 
 main {
@@ -108,11 +106,11 @@ main {
 
 div.gray-bar-container {
 	width: 100%;
-	font-family: var(--sans-font-family);
+	font-family: $sans-font-family;
 }
 
 div.gray-bar-container .gray-bar {
-	background-color: var(--dark-gray);
+	background-color: $dark-gray;
 	color: white;
 	border-radius: 2em;
 	padding: 0.2em 0.5em;
@@ -120,10 +118,10 @@ div.gray-bar-container .gray-bar {
 }
 
 a {
-	color: var(--dark-gray);
+	color: $dark-gray;
 }
 a:visited {
-	color: var(--darker-gray);
+	color: $darker-gray;
 }
 
 main > *:first-child {
@@ -137,7 +135,7 @@ main > *:first-child {
 footer {
 	color: white;
 	text-align: center;
-	font-family: var(--sans-font-family);
+	font-family: $sans-font-family;
 }
 
 footer a {

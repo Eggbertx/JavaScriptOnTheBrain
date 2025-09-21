@@ -1,7 +1,12 @@
 ---
 import path from "path";
-const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
-const activePage:string = Astro.props.activePage ?? "";
+
+const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain/";
+let activePage:string = Astro.props.activePage ?? basePath;
+if(path.relative(basePath, activePage) === "..") {
+	activePage = path.join(basePath, "/");
+}
+
 
 const links = [
 	{ href: path.join(basePath, "/"), text: "Intro" },

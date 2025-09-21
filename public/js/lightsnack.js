@@ -54,7 +54,7 @@ frogBase.onload = () => {
 	dangerX = eatenX + 30; // where the frog's speed increases
 	setInterval(drawCanvas, 1000 / 20); // 5 FPS
 }
-frogBase.src = "/img/froggies.gif";
+frogBase.src = "/JavaScriptOnTheBrain/img/froggies.gif";
 
 
 function randBetween(min, max) {
