@@ -55,11 +55,11 @@ frogBase.onload = () => {
 	setInterval(drawCanvas, 1000 / 20); // 5 FPS
 }
 if(window.JSOTB && window.JSOTB.basePath) {
-	console.log(`Setting frogBase.src to ${window.JSOTB.basePath}/img/froggies.gif`);
-	frogBase.src = window.JSOTB.basePath + "/img/froggies.gif";
+	console.log(`Setting frogBase.src to ${window.JSOTB.basePath}/img/froggies.png`);
+	frogBase.src = window.JSOTB.basePath + "/img/froggies.png";
 } else {
 	console.log("window.JSOTB not defined, using default path for frogBase.src");
-	frogBase.src = "/JavaScriptOnTheBrain/img/froggies.gif";
+	frogBase.src = "/JavaScriptOnTheBrain/img/froggies.png";
 }
 
 
