@@ -1,7 +1,7 @@
 [
 	{
 		"name": "Solitaire",
-		"link": "games/solitaire.html",
+		"link": "games/solitaire",
 		"shortDesc": "a marble solitaire game. I made this after less than a week's experience of Java, but it still doesn't look entirely amateurish.",
 		"newShortDesc": "A simple marbile solitaire game. Drag and drop each marble over a marble vertically or horizontally adjacent to it to remove it. The goal is to end up with one marble in the center hole.",
 		"gameScripts": [
@@ -12,14 +12,24 @@
 	},
 	{
 		"name": "Rubik Unbound",
-		"link": "games/rubik-unbound.html",
+		"link": "games/rubik",
 		"originalDate": "March 11, 1996",
 		"shortDesc": "Rubik's Cube in full 3D. Very tricky to make. Inspired by Sun's rotatable wireframe cube demo applet and Michael Schubart's early Rubik's Cube version. (An interesting modification of this applet was recently created by Lars Petrus to be used for educational purposes on his Solving Rubik's Cube for Speed page.)",
-		"newShortDesc": "A 3D implementation of Rubik's Cube. Middle click and drag to rotate the cube. Left click and drag on a row or column to rotate it. Press the S key to randomize the cube and R to reset it."
+		"newShortDesc": "A 3D implementation of Rubik's Cube. Middle click and drag to rotate the cube. Left click and drag on a row or column to rotate it. Press the S key to randomize the cube and R to reset it.",
+		"gamePageDescriptionHTML": "<p>This is yet another Java implementation of the classical Rubik's Cube. I tried to make the user interface as simple and obvious as possible. You should be able to figure out how it works. Twist or rotate by pointing and dragging in \"natural\" directions.</p><p>Press s to scramble and r to restore (while positioning the mouse cursor somewhere in the applet region). Note that it's not possible to twist the middle segments. That would have interfered too much with the plain rotation.</p><p>An optional parameter, \"bgcolor\", has been added. If used, it takes as input a background color as a hexadecimal RGB value, e.g. \"25003f\" for deep purple. Default is ordinary light gray.</p><p> More than 13 years after this project, I built a similar cube for the iPhone. Not as a standard application, but as a web app -- out of JavaScript and WebKit style extensions -- just to see if it could be done. And it could. The following link won't work in a browser, but it should run fine on your iPhone or iPod Touch:</p><p><a href=\"http://www.javaonthebrain.com/iphone/cube\">http://www.javaonthebrain.com/iphone/cube</a></p>",
+		"newGamePageDescriptionHTML": "",
+		"gameLinks": [
+			{"text": "Other games", "href": "./", "icon": "mlist.png"},
+			{"text": "History", "href": "#", "icon": "mhistory.png"},
+			{"text": "Technical stuff", "href": "#", "icon": "mtechnical.png"},
+			{"text": "Reactions", "href": "#", "icon": "mreactions.png"},
+			{"text": "Download", "href": "#", "icon": "mdownload.png"}
+		],
+		"gameLinksHorizontal": false
 	},
 	{
 		"name": "A Light Snack",
-		"link": "games/frog.html",
+		"link": "games/frog",
 		"originalDate": "March 23, 1996",
 		"shortDesc": "the fly-eating frog decoration on my main page. This was a test of threads and animation.",
 		"newShortDesc": "the fly-eating from decoration on the main page. This is a canvas animation of a frog that eats flies that fly around randomly.",
@@ -27,6 +37,11 @@
 		"newGamePageDescriptionHTML": "This animation slices up the original image into sub-images for things like the frog, its face, and the flies. A background color can be set by altering the CSS background/background-color value. The animation on the front page uses the same script, but has a grayscale CSS filter applied.",
 		"gameScripts": [
 			{"src":"/js/lightsnack.js", "defer": true}
-		]
+		],
+		"gameLinks": [
+			{"text": "Other games", "href": "./", "icon": "mlist.png"},
+			{"text": "Ingredients", "href": "#", "icon": "bingredients.png"}
+		],
+		"gameLinksHorizontal": true
 	}
 ]

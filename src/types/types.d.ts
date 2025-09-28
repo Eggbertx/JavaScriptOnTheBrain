@@ -7,6 +7,8 @@ interface GameListItem {
 	gameScripts?: RuntimeScript[];
 	gamePageDescriptionHTML?: string;
 	newGamePageDescriptionHTML?: string;
+	gameLinks?: GameLink[];
+	gameLinksHorizontal?: boolean;
 
 	gameID?: string; // set by [game].astro, not in the JSON file
 }
@@ -24,6 +26,12 @@ interface JSOTBConfig {
 	basePath: string;
 	activePage: string;
 	activeTab: ActiveTab;
+}
+
+interface GameLink {
+	text: string;
+	href: string;
+	icon: string;
 }
 
 declare global {

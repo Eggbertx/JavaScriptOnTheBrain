@@ -2,6 +2,7 @@
 import path from "path";
 import gamesListImport from "../../data/games.json";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import GameLinksBar from "../../components/GameLinksBar.astro";
 
 const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
 
@@ -41,6 +42,7 @@ if(!activeGame) {
 	throw new Error(`Game not found: ${Astro.params.game}`);
 }
 const debug = import.meta.env.DEBUG_GAMES?true:false;
+const articleClass = activeGame.gameLinksHorizontal?"game-info hlinks":"game-info vlinks";
 ---
 <BaseLayout
 	activePage={path.join(basePath, (activeGame?.gameID) ?? "games") + ".html"}
@@ -52,8 +54,15 @@ const debug = import.meta.env.DEBUG_GAMES?true:false;
 			window.debugGames = true;
 		</script>}
 		<section id="gameplay-area"></section>
-		{activeGame.newGamePageDescriptionHTML?
-			<p set:html={activeGame.newGamePageDescriptionHTML.replace("{BASE_PATH}", basePath)}></p>:
-			<p set:html={activeGame.gamePageDescriptionHTML?.replace("{BASE_PATH}", basePath)}></p>
-		}
+		<section class={articleClass}>
+			<article>
+				{activeGame.newGamePageDescriptionHTML?
+					<p set:html={activeGame.newGamePageDescriptionHTML.replace("{BASE_PATH}", basePath)}></p>:
+					<p set:html={activeGame.gamePageDescriptionHTML?.replace("{BASE_PATH}", basePath)}></p>
+				}
+			</article>
+			{activeGame.gameLinks && 
+				<GameLinksBar gameLinks={activeGame.gameLinks} isHorizontal={activeGame.gameLinksHorizontal} />
+			}
+		</section>
 </BaseLayout>

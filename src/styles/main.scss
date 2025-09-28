@@ -176,3 +176,91 @@ canvas.main-canvas {
 .grayscale {
 	filter: grayscale(1);
 }
+
+nav.game-links {
+	display: inline-grid;
+	font-family: $sans-font-family;
+	font-size: 12pt;
+	a {
+		text-decoration: none;
+		display:block;
+		height: 40px;
+	}
+	.link-icon {
+		background-color: $dark-gray;
+	}
+	span {
+		vertical-align: 50%;
+	}
+}
+
+.links-horizontal {
+	grid-template-rows: auto auto;
+	grid-template-columns: 20px repeat(auto-fill, minmax(50px, 80px));
+
+	row-gap: 0.5em;
+	text-align: center;
+	align-self: center;
+	.left-cap, .right-cap {
+		width: 20px;
+		background-color: $dark-gray;
+		height: 40px;
+	}
+	a.link-icon, .left-cap, .right-cap {
+		grid-row: 1;
+	}
+	.link-text,.link-spacer {
+		grid-row: 2;
+		hyphens: auto;
+		overflow-wrap: break-word;
+	}
+	.link-spacer {
+		width: 20px;
+	}
+	.left-cap,.link-spacer {
+		border-top-left-radius: 4em;
+		border-bottom-left-radius: 4em;
+		align-self: start;
+	}
+	.right-cap {
+		border-top-right-radius: 4em;
+		border-bottom-right-radius: 4em;
+		align-self: end;
+	}
+}
+
+.links-vertical {
+	grid-template-columns: auto minmax(50px, 100px);
+	grid-auto-rows: 40px;
+	column-gap: 0.5em;
+	align-items: center;
+	padding-right: 1em;
+	.link-icon, .top-cap {
+		grid-column: 1;
+	}
+	.link-text {
+		grid-column: 2;
+		align-content: center;
+	}
+	.top-cap, .bottom-cap {
+		height: 20px;
+		background-color: $dark-gray;
+	}
+	.top-cap {
+		border-top-left-radius: 4em;
+		border-top-right-radius: 4em;
+		align-self: end;
+	}
+	.bottom-cap {
+		border-bottom-left-radius: 4em;
+		border-bottom-right-radius: 4em;
+		align-self: start;
+	}
+}
+
+.game-info {
+	display:flex;
+}
+.game-info.hlinks {
+	flex-direction: column;
+}
