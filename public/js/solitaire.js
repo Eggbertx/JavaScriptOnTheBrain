@@ -1,43 +1,39 @@
-const gameplayArea = document.querySelector("section#gameplay-area");
+const gameplayArea = document.querySelector("p:nth-of-type(2)");
 if (!gameplayArea) {
 	throw new Error("Gameplay area not found");
 }
-gameplayArea.insertAdjacentHTML("beforeend", `<canvas id="solitaire-canvas" class="main-canvas" />`);
+gameplayArea.insertAdjacentHTML("beforeend", `<canvas id="solitaire-canvas" class="main-canvas" style="display:block;align-content:center;" />`);
 
 /** @type {HTMLCanvasElement} */
 const cnv = document.querySelector("canvas#solitaire-canvas");
 if (!cnv) {
-	throw new Error("Canvas element not found");
+	throw new Error("Unable to create canvas");
 }
 
-const SHADOW_COLOR = "#444";
 const CELL_INVALID = 0;
 const CELL_EMPTY = 1;
 const CELL_MARBLE = 2;
-const scale = 2;
+const scale = 1;
 
 cnv.width = 280 * scale;
 cnv.height = 190 * scale;
 const boardCenterXY = cnv.height/2;
 
-
-/** @type {CanvasRenderingContext2D} */
 const ctx = cnv.getContext("2d");
 if (!ctx) {
 	throw new Error("Canvas context not found");
 }
 ctx.imageSmoothingEnabled = false;
 
-const fieldWidthHeight = 9;
-const marbleRadius = cnv.height / 1.2 / fieldWidthHeight;
-/** @type {number[][]} */
-const field = new Array(fieldWidthHeight).fill([]).map(() => new Array(fieldWidthHeight).fill(2));
+const cellsWH = 9;
+const marbleRadius = cnv.height / 34;
+const field = new Array(cellsWH).fill([]).map(() => new Array(cellsWH).fill(2));
 let eliminated = 0;
 
 function resetField() {
 	eliminated = 0;
-	for(let i = 0; i < fieldWidthHeight; i++) {
-		for(let j = 0; j < fieldWidthHeight; j++) {
+	for(let i = 0; i < cellsWH; i++) {
+		for(let j = 0; j < cellsWH; j++) {
 			field[i][j] = (
 				i < 3 && j < 3 || // upper left
 				i < 3 && j > 5 || // upper right
@@ -51,110 +47,124 @@ function resetField() {
 	updateCanvas();
 }
 
-function drawCircle(x, y, radius, color, strokeColor = "black") {
+function drawCircle(x, y, radius, fillStyle, strokeStyle = "transparent") {
+	const tmpShadowColor = ctx.shadowColor;
 	ctx.beginPath();
-	ctx.fillStyle = color;
-	ctx.strokeStyle = strokeColor;
-	ctx.lineWidth = 1;
+	ctx.fillStyle = fillStyle;
+	ctx.strokeStyle = strokeStyle;
 	ctx.arc(x, y, radius, 0, Math.PI * 2);
 	ctx.fill();
-	ctx.stroke();
-	ctx.closePath();
+	if(strokeStyle !== "transparent") {
+		ctx.shadowColor = "transparent";
+		ctx.stroke();
+	}
+	ctx.shadowColor = tmpShadowColor;
 }
 
 function drawButton(x, y, width, height, text) {
 	ctx.fillStyle = "blue";
-	ctx.strokeStyle = "cyan";
-	ctx.shadowColor = SHADOW_COLOR;
-	ctx.shadowOffsetX = 2;
-	ctx.shadowOffsetY = 2;
+	ctx.strokeStyle = "black";
+	ctx.shadowColor = "transparent";
 	ctx.lineWidth = 1;
 	ctx.fillRect(x, y, width, height);
 	ctx.strokeRect(x, y, width, height);
 
-	ctx.shadowColor = "transparent";
-	ctx.shadowOffsetX = 0;
-	ctx.shadowOffsetY = 0;
 	ctx.fillStyle = "cyan";
-	ctx.font = `16pt sans-serif`;
+	ctx.font = `12pt sans-serif`;
 	ctx.textAlign = "center";
 	ctx.textBaseline = "middle";
 	ctx.fillText(text, x + width / 2, y + height / 2);
 }
 
 function drawCell(x, y, radius, marbleState) {
-	// main circle
-	drawCircle(x, y, radius, marbleState === 2 ? "cyan" : "black");
-
-	// specular highlight and shadow
-	if(marbleState == 2) {
-		drawCircle(x - radius / 3, y - radius / 3, radius / 2, "white", "transparent");
-		drawCircle(x + radius / 3, y + radius / 3, radius / 3, "blue", "transparent");
+	const shadowColor = ctx.shadowColor;
+	const shadowOffset = ctx.shadowOffsetX;
+	if (marbleState == CELL_EMPTY) {
+		ctx.shadowColor = "cyan";
+		ctx.shadowOffsetX = ctx.shadowOffsetY = 1;
+		drawCircle(x+(1*scale), y + (1*scale), (radius + scale), "black");
+		drawCircle(x+(2*scale), y + (2*scale), radius, "blue");
+		ctx.shadowColor = "transparent";
+	} else if (marbleState == CELL_MARBLE) {
+		// main circle
+		ctx.shadowColor = "black";
+		ctx.shadowOffsetX = ctx.shadowOffsetY = scale;
+		drawCircle(x, y, radius, marbleState === 2 ? "cyan" : "black");
+		ctx.shadowColor = "transparent";
+	
+		// specular highlight and shadow
+		ctx.shadowColor = "blue";
+		ctx.shadowOffsetX = ctx.shadowOffsetY = scale*4;
+		if(marbleState == 2) {
+			drawCircle(x - radius / 3, y - radius / 3, radius / 2, "white");
+		}
 	}
+	ctx.shadowColor = shadowColor;
+	ctx.shadowOffsetX = ctx.shadowOffsetY = shadowOffset;
 }
 
 function updateCanvas() {
-	ctx.shadowColor = SHADOW_COLOR;
-	ctx.shadowBlur = 0;
-	ctx.shadowOffsetX = 5;
-	ctx.shadowOffsetY = 5;
-
-
-	ctx.lineWidth = 3;
-	drawCircle(boardCenterXY, boardCenterXY, (cnv.height-15)/2, "blue", "cyan");
-
+	ctx.shadowColor = "gray";
+	ctx.shadowOffsetX = 5*scale;
+	ctx.shadowOffsetY = 5*scale;
+	ctx.lineWidth = 1;
+	drawCircle(boardCenterXY, boardCenterXY, (cnv.height-15)/2, "blue", "cyan"); // main board
 	ctx.shadowColor = "transparent";
-	ctx.shadowBlur = 0;
-	ctx.shadowOffsetX = 0;
-	ctx.shadowOffsetY = 0;
 
-	// inner circle
-	drawCircle(boardCenterXY, boardCenterXY, (cnv.height-30)/2, "blue", "cyan");
+	drawCircle(boardCenterXY, boardCenterXY, (cnv.height-30)/2, "blue", "cyan"); // inner circle
 
 	// draw field
-	for(let y = 0; y < fieldWidthHeight; y++) {
-		for(let x = 0; x < fieldWidthHeight; x++) {
+	for(let y = 0; y < cellsWH; y++) {
+		for(let x = 0; x < cellsWH; x++) {
 			const marbleState = field[y][x];
-			if(marbleState === 0) continue; // skip non-hole cells
-			const cellX = x * marbleRadius + boardCenterXY - (fieldWidthHeight * marbleRadius) / 2;
-			const cellY = y * marbleRadius + boardCenterXY - (fieldWidthHeight * marbleRadius) / 2;
-			drawCell(cellX + (marbleRadius / 2), cellY + (marbleRadius / 2), (marbleRadius - 10) / 2, marbleState);
+			if(marbleState === CELL_INVALID) continue;
+			const cellX = boardCenterXY + (x - cellsWH/2) * marbleRadius*3 + marbleRadius*1.5;
+			const cellY = boardCenterXY + (y - cellsWH/2) * marbleRadius*3 + marbleRadius*1.5;
+			drawCell(cellX, cellY, marbleRadius, marbleState);
 		}
 	}
 
 	const baseEliminatedX = cnv.height+20;
 	for(i = 0; i < eliminated; i++) {
-		let x = i % 4;
-		let y = Math.floor((i - x) / 4);
-		drawCell(baseEliminatedX + x * marbleRadius/1.5, y * marbleRadius/1.5+16, marbleRadius/4, CELL_MARBLE);
+		let x = i % 5;
+		let y = Math.floor((i - x) / 5);
+		drawCell(baseEliminatedX + x * marbleRadius*2, y * marbleRadius*2+16, marbleRadius*.8, CELL_MARBLE);
 	}
 
-	drawButton(cnv.width - 160, cnv.height - 40, 80, 30, "Reset");
+	drawButton(cnv.width - 80*scale, cnv.height - 26*scale, 60, 24, "Reset");
 }
 
 function mouseCellPos(e) {
 	const rect = cnv.getBoundingClientRect();
 	const mouseX = e.clientX - rect.left;
 	const mouseY = e.clientY - rect.top;
-	const cellX = Math.floor((mouseX - (boardCenterXY - (fieldWidthHeight * marbleRadius) / 2)) / marbleRadius);
-	const cellY = Math.floor((mouseY - (boardCenterXY - (fieldWidthHeight * marbleRadius) / 2)) / marbleRadius);
-	return {x: cellX, y: cellY};
+
+	for(let y = 0; y < cellsWH; y++) {
+		for(let x = 0; x < cellsWH; x++) {
+			if(field[y][x] === CELL_INVALID) continue;
+			const cellX = boardCenterXY + (x - cellsWH/2) * marbleRadius*3 + marbleRadius*1.5;
+			const cellY = boardCenterXY + (y - cellsWH/2) * marbleRadius*3 + marbleRadius*1.5;
+			if(Math.hypot(mouseX - cellX, mouseY - cellY) <= marbleRadius) {
+				return {x, y};
+			}
+		}
+	}
+	return {x: -1, y: -1};
 }
 
-// if activeX and activeY > -1, field[activeY][activeX] is the marble currently being dragged, and set to -1 on release
 let activeX = -1;
 let activeY = -1;
 cnv.onmousedown = (e) => {
 	const rect = cnv.getBoundingClientRect();
 	const mouseX = e.clientX - rect.left;
 	const mouseY = e.clientY - rect.top;
-	if(mouseX >= cnv.width - 160 && mouseX <= cnv.width - 80 && mouseY >= cnv.height - 40 && mouseY <= cnv.height - 10) {
+	if(mouseX >= cnv.width - 80*scale && mouseX <= cnv.width - 80*scale+60 && mouseY >= cnv.height - 26*scale && mouseY <= cnv.height - 26*scale+24) {
 		resetField();
 		return;
 	}
 
 	const cellPos = mouseCellPos(e);
-	if(cellPos.x < 0 || cellPos.x >= fieldWidthHeight || cellPos.y < 0 || cellPos.y >= fieldWidthHeight || field[cellPos.y][cellPos.x] !== CELL_MARBLE) {
+	if(cellPos.x < 0 || cellPos.x >= cellsWH || cellPos.y < 0 || cellPos.y >= cellsWH || field[cellPos.y][cellPos.x] !== CELL_MARBLE) {
 		activeX = -1;
 		activeY = -1;
 	} else {
@@ -174,7 +184,7 @@ cnv.onmouseout = clearActiveMarble;
 
 cnv.onmouseup = (e) => {
 	const cellPos = mouseCellPos(e);
-	if(cellPos.x < 0 || cellPos.x >= fieldWidthHeight || cellPos.y < 0 || cellPos.y >= fieldWidthHeight) {
+	if(cellPos.x < 0 || cellPos.x >= cellsWH || cellPos.y < 0 || cellPos.y >= cellsWH) {
 		clearActiveMarble();
 		return;
 	}
