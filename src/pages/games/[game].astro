@@ -45,7 +45,7 @@ const debug = import.meta.env.DEBUG_GAMES?true:false;
 const articleClass = activeGame.gameLinksHorizontal?"game-info hlinks":"game-info vlinks";
 ---
 <BaseLayout
-	activePage={path.join(basePath, (activeGame?.gameID) ?? "games") + ".html"}
+	activePage={path.join(basePath, (activeGame?.gameID) ?? "games")}
 	pageTitle={activeGame?.name}
 	gameScripts={activeGame.gameScripts}
 	hasTitleHeader={true}
@@ -57,8 +57,8 @@ const articleClass = activeGame.gameLinksHorizontal?"game-info hlinks":"game-inf
 		<section class={articleClass}>
 			<article>
 				{activeGame.newGamePageDescriptionHTML?
-					<p set:html={activeGame.newGamePageDescriptionHTML.replace("{BASE_PATH}", basePath)}></p>:
-					<p set:html={activeGame.gamePageDescriptionHTML?.replace("{BASE_PATH}", basePath)}></p>
+					<p set:html={activeGame.newGamePageDescriptionHTML.replaceAll("$BASE_PATH", basePath)}></p>:
+					<p set:html={activeGame.gamePageDescriptionHTML?.replaceAll("$BASE_PATH", basePath)}></p>
 				}
 			</article>
 			{activeGame.gameLinks && 

@@ -19,7 +19,7 @@
 		"gamePageDescriptionHTML": "<p>This is yet another Java implementation of the classical Rubik's Cube. I tried to make the user interface as simple and obvious as possible. You should be able to figure out how it works. Twist or rotate by pointing and dragging in \"natural\" directions.</p><p>Press s to scramble and r to restore (while positioning the mouse cursor somewhere in the applet region). Note that it's not possible to twist the middle segments. That would have interfered too much with the plain rotation.</p><p>An optional parameter, \"bgcolor\", has been added. If used, it takes as input a background color as a hexadecimal RGB value, e.g. \"25003f\" for deep purple. Default is ordinary light gray.</p><p> More than 13 years after this project, I built a similar cube for the iPhone. Not as a standard application, but as a web app -- out of JavaScript and WebKit style extensions -- just to see if it could be done. And it could. The following link won't work in a browser, but it should run fine on your iPhone or iPod Touch:</p><p><a href=\"http://www.javaonthebrain.com/iphone/cube\">http://www.javaonthebrain.com/iphone/cube</a></p>",
 		"newGamePageDescriptionHTML": "",
 		"gameLinks": [
-			{"text": "Other games", "href": "./", "icon": "mlist.png"},
+			{"text": "Other games", "href": "$BASE_PATH/games", "icon": "mlist.png"},
 			{"text": "History", "href": "#", "icon": "mhistory.png"},
 			{"text": "Technical stuff", "href": "#", "icon": "mtechnical.png"},
 			{"text": "Reactions", "href": "#", "icon": "mreactions.png"},
@@ -34,14 +34,9 @@
 		"shortDesc": "the fly-eating frog decoration on my main page. This was a test of threads and animation.",
 		"newShortDesc": "the fly-eating from decoration on the main page. This is a canvas animation of a frog that eats flies that fly around randomly.",
 		"gamePageDescriptionHTML": "The frog has been painted green and updated with an optional background color parameter. For example, &lt;param name=\"bgcolor\" value=\"#a000ff\"&gt; sets the background to blueish purple. Default is light gray.",
-		"newGamePageDescriptionHTML": "This animation slices up the original image into sub-images for things like the frog, its face, and the flies. A background color can be set by altering the CSS background/background-color value. The animation on the front page uses the same script, but has a grayscale CSS filter applied.",
+		"newGamePageDescriptionHTML": "<p>This animation slices up the original image into sub-images for things like the frog, its face, and the flies. A background color can be set by altering the CSS background/background-color value. The animation on the front page uses the same script, but has a grayscale CSS filter applied.</p><p><a href=\"$BASE_PATH/js/lightsnack.js\">Here</a> is the source code and <a href=\"$BASE_PATH/img/froggies.png\">here</a> is the image data.</p>",
 		"gameScripts": [
 			{"src":"/js/lightsnack.js", "defer": true}
-		],
-		"gameLinks": [
-			{"text": "Other games", "href": "./", "icon": "mlist.png"},
-			{"text": "Ingredients", "href": "#", "icon": "bingredients.png"}
-		],
-		"gameLinksHorizontal": true
+		]
 	}
 ]
