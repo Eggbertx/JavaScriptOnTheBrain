@@ -3,8 +3,7 @@ import path from "path";
 import gamesListImport from "../../data/games.yaml";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import GameLinksBar from "../../components/GameLinksBar.astro";
-
-const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
+import { fixLinks, prependBasePath } from "../../scripts/util";
 
 const gamesList:GameListItem[] = gamesListImport.map(game => {
 	if(!game.link) {
@@ -13,7 +12,7 @@ const gamesList:GameListItem[] = gamesListImport.map(game => {
 
 	return {
 		...game,
-		link: game.link.startsWith("http") ? game.link : path.join(basePath, game.link),
+		link: prependBasePath(game.link),
 		gameScripts: game.gameScripts?.map((script:RuntimeScript) => {
 			if(!script.src) {
 				throw new Error(`Game script source is missing for game: ${game.name}`);
@@ -44,7 +43,7 @@ const debug = import.meta.env.DEBUG_GAMES?true:false;
 const articleClass = activeGame.gameLinksHorizontal?"game-info hlinks":"game-info vlinks";
 ---
 <BaseLayout
-	activePage={path.join(basePath, (activeGame?.gameID) ?? "games")}
+	activePage={(activeGame?.gameID) ?? "games"}
 	pageTitle={activeGame?.name}
 	gameScripts={activeGame.gameScripts}
 	hasTitleHeader={true}
@@ -56,8 +55,8 @@ const articleClass = activeGame.gameLinksHorizontal?"game-info hlinks":"game-inf
 		<section class={articleClass}>
 			<article>
 				{activeGame.newGamePageDescriptionHTML?
-					<p set:html={activeGame.newGamePageDescriptionHTML.replaceAll("$BASE_PATH", basePath)}></p>:
-					<p set:html={activeGame.gamePageDescriptionHTML?.replaceAll("$BASE_PATH", basePath)}></p>
+					<p set:html={fixLinks(activeGame.newGamePageDescriptionHTML)}></p>:
+					<p set:html={fixLinks(activeGame.gamePageDescriptionHTML ?? "TODO")}></p>
 				}
 			</article>
 			{activeGame.gameLinks && 

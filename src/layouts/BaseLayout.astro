@@ -1,21 +1,16 @@
 ---
-import path from "path";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import "../styles/main.scss";
+import { prependBasePath } from "../scripts/util";
 
 const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
 const siteTitle:string = "JavaScript on the Brain";
-let pageTitle:string|null = Astro.props.pageTitle ?? null;
-const activePage:string = Astro.props.activePage ?? "/JavaScriptOnTheBrain";
+const activePage:string = prependBasePath(Astro.props.activePage ?? "/");
 const activeTab:ActiveTab = Astro.props.activeTab ?? "none";
-
-const titleElem = pageTitle? `${pageTitle} - ${siteTitle}` : siteTitle;
+const pageTitle:string|null = Astro.props.pageTitle ?? siteTitle;
+const titleElem = (pageTitle && pageTitle != siteTitle)? `${pageTitle} - ${siteTitle}` : siteTitle;
 const gameScripts:RuntimeScript[] = Astro.props.gameScripts ?? [];
-
-if(!pageTitle)
-	pageTitle = siteTitle;
-
 const hasTitleHeader = Astro.props.hasTitleHeader ?? false;
 ---
 <!DOCTYPE html>
@@ -23,7 +18,7 @@ const hasTitleHeader = Astro.props.hasTitleHeader ?? false;
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="shortcut icon" href={path.join(basePath, "/img/favicon.png")} type="image/png">
+	<link rel="shortcut icon" href={prependBasePath("/img/favicon.png")} type="image/png">
 	<title>{titleElem}</title>
 	<script define:vars={{basePath,activePage,activeTab}} is:inline>
 		window.JSOTB = {
@@ -33,7 +28,7 @@ const hasTitleHeader = Astro.props.hasTitleHeader ?? false;
 		};
 	</script>
 	{gameScripts.map(script => (
-		<script src={path.join(basePath, script.src)} async={script.async} defer={script.defer} type={script.type ?? "text/javascript"} is:inline></script>
+		<script src={prependBasePath(script.src)} async={script.async} defer={script.defer} type={script.type ?? "text/javascript"} is:inline></script>
 	))}
 </head>
 <body>

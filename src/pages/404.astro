@@ -1,11 +1,8 @@
 ---
-import path from "path";
 import BaseLayout from "../layouts/BaseLayout.astro";
-
-const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
 ---
 
-<BaseLayout activePage={path.join(basePath, "404")}>
+<BaseLayout activePage={"404"}>
 	<h2>404 - Page not Found</h2>
 	<p>The requested page was not found on the server.</p>
 </BaseLayout>

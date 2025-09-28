@@ -1,27 +1,27 @@
 ---
 import path from "path";
+import { prependBasePath } from "../scripts/util";
 
 const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain/";
 let activePage:string = Astro.props.activePage ?? basePath;
 const activeTab:ActiveTab = Astro.props.activeTab ?? "none";
 
 if(path.relative(basePath, activePage) === "..") {
-	activePage = path.join(basePath, "/");
+	activePage = basePath;
 }
-console.log(activePage)
 
 const links = [
 	{ href: basePath, text: "Intro" },
-	{ href: path.join(basePath, "/games"), text: "Games" },
-	{ href: path.join(basePath, "/goals"), text: "Goals" },
-	{ href: path.join(basePath, "/feedback"), text: "Feedback" },
-	{ href: path.join(basePath, "/links"), text: "Links" },
+	{ href: prependBasePath("games"), text: "Games" },
+	{ href: prependBasePath("goals"), text: "Goals" },
+	{ href: "https://github.com/Eggbertx/JavaScriptOnTheBrain/issues", text: "Feedback" },
+	{ href: prependBasePath("links"), text: "Links" },
 ];
 ---
 <nav class="tabbar">
 	<ul>
 		{links.map(link => (
-			<li class={(link.href === activePage || (link.text === activeTab)) ? "tab tab-active" : "tab"}><a href={link.href} >{link.text}</a></li>
+			<li class={(link.href === activePage || (link.text === activeTab)) ? "tab tab-active" : "tab"}><a href={link.href}>{link.text}</a></li>
 		))}
 	</ul>
 </nav>

@@ -1,9 +1,8 @@
 ---
-import path from "path";
+import { fixLinks, prependBasePath } from "../scripts/util";
 
-const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
 const item:GameListItem = Astro.props.item
 ---
-<li class="game-entry"><img src={path.join(basePath,"/img/apple.png")} alt="Game">
-	<p><a href={item.link}>{item.name}</a> - {item.newShortDesc?item.newShortDesc:item.shortDesc}</p>
+<li class="game-entry"><img src={prependBasePath("/img/apple.png")} alt="Game">
+	<p><a href={fixLinks(item.link)}>{item.name}</a> - {item.newShortDesc?item.newShortDesc:item.shortDesc}</p>
 </li>

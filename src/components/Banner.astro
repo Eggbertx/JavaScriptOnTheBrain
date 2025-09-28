@@ -1,10 +1,9 @@
 ---
-import path from "path";
-const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
+import { prependBasePath } from "../scripts/util";
 ---
 
 <div class="banner">
-	<img src={path.join(basePath,"/img/jotb-logo.png")} alt="Java on the Brain Logo" class="logo">
+	<img src={prependBasePath("/img/jotb-logo.png")} alt="Java on the Brain Logo" class="logo">
 	<h1 class="site-title">JavaScript on the Brain</h1>
 	<p>JavaScript remakes of Karl Hornell's Applet Center</p>
 </div>

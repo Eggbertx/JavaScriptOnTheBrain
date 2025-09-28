@@ -1,28 +1,20 @@
 ---
-import path from "path";
+import { fixLinks, prependBasePath } from "../scripts/util";
 
-const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
 const gameLinks = (Astro.props.gameLinks ?? []) as GameLink[];
 const isHorizontal = Astro.props.isHorizontal as boolean;
 
 const navClass = isHorizontal ? "game-links links-horizontal" : "game-links links-vertical";
-
-function fixLink(link: string) {
-	if (link.indexOf("://") > -1) {
-		return link;
-	}
-	return path.normalize(link.replace("$BASE_PATH", basePath));
-}
 
 ---
 
 <nav class={navClass}>
 	<div class={isHorizontal ? "left-cap" : "top-cap"}></div>{isHorizontal && <div class="link-spacer"></div>}
 	{gameLinks.map((link) => (
-		<a class="link-icon" href={fixLink(link.href)} title={link.text}>
-			<img class="link-icon" src={path.join(basePath, "img", link.icon)} alt={link.text} />
+		<a class="link-icon" href={fixLinks(link.href)} title={link.text}>
+			<img class="link-icon" src={prependBasePath("img", link.icon)} alt={link.text} />
 		</a>
-		<a class="link-text" href={fixLink(link.href)}>{link.text}</a>
+		<a class="link-text" href={fixLinks(link.href)}>{link.text}</a>
 	))}
 	<div class={isHorizontal ? "right-cap" : "bottom-cap"}></div>
 </nav>

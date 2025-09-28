@@ -1,14 +1,12 @@
 ---
-import path from "path";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import GrayBar from "../components/GrayBar.astro";
-
-const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
+import { prependBasePath } from "../scripts/util";
 ---
 
-<BaseLayout activePage={path.join(basePath, "/")}>
+<BaseLayout activePage={"/"}>
 	<section id="gameplay-area" class="grayscale"></section>
-	<script src={path.join(basePath, "/js/lightsnack.js")} is:inline></script>
+	<script src={prependBasePath("/js/lightsnack.js")} is:inline></script>
 	<GrayBar text="Welcome, noble netsurfer!" />
 	<p>This site represents my attempt to recreate some of the Java applet games originally created by Karl H&ouml;rnell. Since common browser support for Java applets has been abandoned, the games on the site are unusable unless you are using a much much much older browser, like Netscape or pre-4.x versions of Firefox. Or Internet Explorer, god forbid.</p>
 	<p>Instead of using Java, the games are rewritten and reimplemented using JavaScript, meaning some of them should be (somewhat) mobile compatible as well.</p>
