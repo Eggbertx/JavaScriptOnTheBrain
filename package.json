@@ -12,5 +12,8 @@
   "dependencies": {
     "astro": "^5.14.0",
     "sass": "^1.92.1"
+  },
+  "devDependencies": {
+    "@rollup/plugin-yaml": "^4.1.2"
   }
 }

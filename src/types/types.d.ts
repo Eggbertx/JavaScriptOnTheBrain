@@ -13,6 +13,10 @@ interface GameListItem {
 	gameID?: string; // set by [game].astro, not in the JSON file
 }
 
+declare module "*/data/games.yaml" {
+	export default items as GameListItem[];
+}
+
 interface RuntimeScript {
 	src: string;
 	type?: string;

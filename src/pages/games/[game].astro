@@ -1,6 +1,6 @@
 ---
 import path from "path";
-import gamesListImport from "../../data/games.json";
+import gamesListImport from "../../data/games.yaml";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import GameLinksBar from "../../components/GameLinksBar.astro";
 
@@ -21,7 +21,6 @@ const gamesList:GameListItem[] = gamesListImport.map(game => {
 			return {
 				...script,
 				src: script.src
-				//src: script.src.startsWith("http") ? script.src : path.join(basePath, script.src)
 			};
 		}),
 		gameID: path.basename(game.link).replaceAll(".html", ""),
