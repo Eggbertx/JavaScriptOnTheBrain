@@ -4,5 +4,5 @@ import { fixLinks, prependBasePath } from "../scripts/util";
 const item:GameListItem = Astro.props.item
 ---
 <li class="game-entry"><img src={prependBasePath("/img/apple.png")} alt="Game">
-	<p><a href={fixLinks(item.link)}>{item.name}</a> - {item.newShortDesc?item.newShortDesc:item.shortDesc}</p>
+	<p><a href={prependBasePath(item.link)}>{item.name}</a> - {item.newShortDesc?item.newShortDesc:item.shortDesc}</p>
 </li>
