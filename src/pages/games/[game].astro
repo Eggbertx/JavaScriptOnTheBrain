@@ -41,6 +41,7 @@ if(!activeGame) {
 }
 const debug = import.meta.env.DEBUG_GAMES?true:false;
 const articleClass = activeGame.gameLinksHorizontal?"game-info hlinks":"game-info vlinks";
+const originalPageURL = `http://www.javaonthebrain.com/java/${activeGame.link.substring(activeGame.link.lastIndexOf("/")+1)}`;
 ---
 <BaseLayout
 	activePage={(activeGame?.gameID) ?? "games"}
@@ -48,6 +49,8 @@ const articleClass = activeGame.gameLinksHorizontal?"game-info hlinks":"game-inf
 	gameScripts={activeGame.gameScripts}
 	hasTitleHeader={true}
 	activeTab="Games">
+		<p class="original-page"><a href={originalPageURL} target="_blank">Original page</a> </p>
+
 		{debug && <script is:inline>
 			window.debugGames = true;
 		</script>}

@@ -188,6 +188,7 @@ nav.game-links {
 	}
 	.link-icon {
 		background-color: $dark-gray;
+		filter: drop-shadow(0.75px 1px 0 black);
 	}
 	span {
 		vertical-align: 50%;
@@ -258,6 +259,9 @@ nav.game-links {
 		align-self: start;
 	}
 }
+.left-cap, .right-cap, .top-cap, .bottom-cap {
+	filter: drop-shadow(0.75px 0.75px 0 black);
+}
 
 .game-info {
 	display:flex;
@@ -269,5 +273,5 @@ nav.game-links {
 
 .date-line, .original-page {
 	text-align: center;
-	font-style: italic;
+	font-size: 0.75em;
 }
