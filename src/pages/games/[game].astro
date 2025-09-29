@@ -53,12 +53,12 @@ const articleClass = activeGame.gameLinksHorizontal?"game-info hlinks":"game-inf
 		</script>}
 		<section id="gameplay-area"></section>
 		<section class={articleClass}>
-			<article>
+			<div>
 				{activeGame.newGamePageDescriptionHTML?
 					<p set:html={fixLinks(activeGame.newGamePageDescriptionHTML)}></p>:
 					<p set:html={fixLinks(activeGame.gamePageDescriptionHTML ?? "TODO")}></p>
 				}
-			</article>
+			</div>
 			{activeGame.gameLinks && 
 				<GameLinksBar gameLinks={activeGame.gameLinks} isHorizontal={activeGame.gameLinksHorizontal} />
 			}

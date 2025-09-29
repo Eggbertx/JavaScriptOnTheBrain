@@ -1,5 +1,5 @@
 # JavaScript on the Brain
-A work-in-progress reimplementation of the [Java on the Brain](http://www.javaonthebrain.com) website using modern JS
+A work-in-progress reimplementation of the website [Java on the Brain](http://www.javaonthebrain.com) using modern web technologies.
 
 ## Commands
 All commands are run from the root of the project, from a terminal:
