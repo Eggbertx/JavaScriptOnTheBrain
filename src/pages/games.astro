@@ -1,5 +1,4 @@
 ---
-import GrayBar from "../components/GrayBar.astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import games from "../data/games.yaml";
 import GameListEntry from "../components/GameListEntry.astro";
@@ -9,7 +8,7 @@ import GameListEntry from "../components/GameListEntry.astro";
 <BaseLayout activePage={"games"} pageTitle="Games">
 	<p>The below games are based on the ones hosted on <a href="http://www.javaonthebrain.com/">Java on the Brain</a>, reimplemented in JavaScript using canvas and other modern JavaScript and CSS standards, so that they can be realistically run in browsers released in the last couple decades</p>
 	<p>All of my implementations are distributed freely and are not being done for profit.</p>
-	<GrayBar text="Games" />
+	<h2 class="gray-bar">Games</h2>
 	<ul class="games-list">
 		{games.map(item => {
 			return <GameListEntry item={item} />;

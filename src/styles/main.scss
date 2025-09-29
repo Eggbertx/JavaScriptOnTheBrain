@@ -1,3 +1,5 @@
+@use './media-queries.scss';
+
 $darker-gray: #333333;
 $dark-gray: #666666;
 $med-gray: #999999;
@@ -58,37 +60,36 @@ header {
 nav.tabbar {
 	margin-top:0.5em;
 	font-family: $sans-font-family;
+	ul {
+		list-style: none;
+		padding: 0;
+		margin: 0;
+	}
+
+	li {
+		float: left;
+		display: block;
+		color: white;
+		background: $med-gray;
+		border: 1px solid white;
+		border-right: 2px solid black;
+		border-top-left-radius: 1em;
+		border-top-right-radius: 1em;
+
+		a, a:visited {
+			color: black;
+			text-decoration: none;
+			padding: 0.5em 1em;
+		}
+	}
+
+	li.tab.tab-active {
+		background: white;
+	}
 }
 
-nav.tabbar ul {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-}
-
-nav.tabbar li {
-	float: left;
-	display: block;
-	padding: 0.2em 0.8em;
-	color: white;
-	background: $med-gray;
-	margin: 0 0;
-	border: 1px solid white;
-	border-right: 2px solid black;
-	border-top-left-radius: 1em;
-	border-top-right-radius: 1em;
-}
 header {
-	border-bottom: 0.25em solid white;
-}
-
-nav.tabbar li.tab.tab-active {
-	background: white;
-}
-
-nav.tabbar li a, nav.tabbar li a:visited {
-	color: black;
-	text-decoration: none;
+	border-bottom: 0.5em solid white;
 }
 
 main, .page-title {
@@ -104,24 +105,20 @@ main {
 	text-align: center;
 }
 
-div.gray-bar-container {
-	width: 100%;
-	font-family: $sans-font-family;
-}
-
-div.gray-bar-container .gray-bar {
+.gray-bar {
 	background-color: $dark-gray;
 	color: white;
 	border-radius: 2em;
 	padding: 0.2em 0.5em;
 	font-size: 1.5em;
+	font-family: $sans-font-family;
 }
 
 a {
 	color: $dark-gray;
-}
-a:visited {
-	color: $darker-gray;
+	&:visited {
+		color: $darker-gray;
+	}
 }
 
 main > *:first-child {
@@ -136,28 +133,29 @@ footer {
 	color: white;
 	text-align: center;
 	font-family: $sans-font-family;
-}
 
-footer a {
-	color: white;
-	text-decoration: none;
-	font-weight: bold;
-	padding: 0.25em;
-	display: inline-block;
+	a {
+		color: white;
+		text-decoration: none;
+		font-weight: bold;
+		padding: 0.25em;
+		display: inline-block;
+	}
 }
 
 .games-list {
 	padding: 0 0.5em;
 }
+
 .game-entry {
 	display: grid;
 	list-style: none;
 	grid-template-columns: min-content 1fr;
 	column-gap: 0.25em;
 	grid-template-rows: 1fr;
-}
-.game-entry p {
-	margin: auto 0;
+	p {
+		margin: auto 0;
+	}
 }
 
 section#gameplay-area {
@@ -167,6 +165,7 @@ section#gameplay-area {
 	justify-content: center;
 	align-items: center;
 }
+
 canvas.main-canvas {
 	display: inline-block;
 	margin: 0 auto;
@@ -181,6 +180,7 @@ nav.game-links {
 	display: inline-grid;
 	font-family: $sans-font-family;
 	font-size: 12pt;
+
 	a {
 		text-decoration: none;
 		display:block;
@@ -197,10 +197,10 @@ nav.game-links {
 .links-horizontal {
 	grid-template-rows: auto auto;
 	grid-template-columns: 20px repeat(auto-fill, minmax(50px, 80px));
-
 	row-gap: 0.5em;
 	text-align: center;
 	align-self: center;
+
 	.left-cap, .right-cap {
 		width: 20px;
 		background-color: $dark-gray;
@@ -217,7 +217,7 @@ nav.game-links {
 	.link-spacer {
 		width: 20px;
 	}
-	.left-cap,.link-spacer {
+	.left-cap, .link-spacer {
 		border-top-left-radius: 4em;
 		border-bottom-left-radius: 4em;
 		align-self: start;
@@ -235,6 +235,7 @@ nav.game-links {
 	column-gap: 0.5em;
 	align-items: center;
 	padding-right: 1em;
+
 	.link-icon, .top-cap {
 		grid-column: 1;
 	}
@@ -261,6 +262,12 @@ nav.game-links {
 .game-info {
 	display:flex;
 }
+
 .game-info.hlinks {
 	flex-direction: column;
+}
+
+.date-line, .original-page {
+	text-align: center;
+	font-style: italic;
 }
