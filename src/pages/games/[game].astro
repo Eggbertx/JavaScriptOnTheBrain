@@ -40,27 +40,28 @@ if(!activeGame) {
 	throw new Error(`Game not found: ${Astro.params.game}`);
 }
 const debug = import.meta.env.DEBUG_GAMES?true:false;
-const articleClass = activeGame.gameLinksHorizontal?"game-info hlinks":"game-info vlinks";
+const gameInfoClass = activeGame.gameLinksHorizontal?"game-info hlinks":"game-info vlinks";
 const originalPageURL = `http://www.javaonthebrain.com/java/${activeGame.link.substring(activeGame.link.lastIndexOf("/")+1)}`;
+
+const usingOriginalInfo = !activeGame.newGamePageDescriptionHTML && activeGame.gamePageDescriptionHTML;
+const infoClass = usingOriginalInfo ? "original-game-info" : "game-info";
 ---
 <BaseLayout
 	activePage={(activeGame?.gameID) ?? "games"}
 	pageTitle={activeGame?.name}
 	gameScripts={activeGame.gameScripts}
 	hasTitleHeader={true}
-	activeTab="Games">
+	activeTab="Games"
+	importMap={activeGame.importMap}>
 		<p class="original-page"><a href={originalPageURL} target="_blank">Original page</a> </p>
 
 		{debug && <script is:inline>
 			window.debugGames = true;
 		</script>}
-		<section id="gameplay-area"></section>
-		<section class={articleClass}>
-			<div>
-				{activeGame.newGamePageDescriptionHTML?
-					<p set:html={fixLinks(activeGame.newGamePageDescriptionHTML)}></p>:
-					<p set:html={fixLinks(activeGame.gamePageDescriptionHTML ?? "TODO")}></p>
-				}
+		{(!activeGame.noStaticGameplayArea) &&
+			<section class="gameplay-area"></section>}
+		<section class={gameInfoClass}>
+			<div class={infoClass} set:html={fixLinks(activeGame.newGamePageDescriptionHTML ?? activeGame.gamePageDescriptionHTML ?? "TODO")}>
 			</div>
 			{activeGame.gameLinks && 
 				<GameLinksBar gameLinks={activeGame.gameLinks} isHorizontal={activeGame.gameLinksHorizontal} />

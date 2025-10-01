@@ -6,12 +6,16 @@ import { prependBasePath } from "../scripts/util";
 
 const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain";
 const siteTitle:string = "JavaScript on the Brain";
-const activePage:string = prependBasePath(Astro.props.activePage ?? "/");
+const gameScripts:RuntimeScript[] = Astro.props.gameScripts ?? [];
+const activePage:string = prependBasePath(gameScripts.length>0?"/games":"/", (Astro.props.activePage ?? "/"));
 const activeTab:ActiveTab = Astro.props.activeTab ?? "none";
 const pageTitle:string|null = Astro.props.pageTitle ?? siteTitle;
 const titleElem = (pageTitle && pageTitle != siteTitle)? `${pageTitle} - ${siteTitle}` : siteTitle;
-const gameScripts:RuntimeScript[] = Astro.props.gameScripts ?? [];
 const hasTitleHeader = Astro.props.hasTitleHeader ?? false;
+const importMap = Astro.props.importMap ?? null;
+const imports = {
+	imports: importMap ?? {}
+}
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -26,7 +30,18 @@ const hasTitleHeader = Astro.props.hasTitleHeader ?? false;
 			activePage: activePage,
 			activeTab: activeTab,
 		};
+		let showedAlert = false;
+		window.onerror = function(msg, url, lineNo, columnNo, error) {
+			if(showedAlert) return true;
+			showedAlert = true;
+			alert(`${msg} at ${url}:${lineNo}:${columnNo}`);
+			if(error && error.stack) {
+				console.error(error.stack);
+			}
+			return true;
+		};
 	</script>
+	{importMap && <script type="importmap" set:html={JSON.stringify(imports)}></script>}
 	{gameScripts.map(script => (
 		<script src={prependBasePath(script.src)} async={script.async} defer={script.defer} type={script.type ?? "text/javascript"} is:inline></script>
 	))}

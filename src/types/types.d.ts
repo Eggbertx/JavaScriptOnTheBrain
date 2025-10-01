@@ -9,12 +9,18 @@ interface GameListItem {
 	newGamePageDescriptionHTML?: string;
 	gameLinks?: GameLink[];
 	gameLinksHorizontal?: boolean;
+	noStaticGameplayArea?: boolean;
+	importMap?: ImportMap;
 
 	gameID?: string; // set by [game].astro, not in the JSON file
 }
 
 declare module "*/data/games.yaml" {
 	export default items as GameListItem[];
+}
+
+interface ImportMap {
+	[key: string]: string;
 }
 
 interface RuntimeScript {

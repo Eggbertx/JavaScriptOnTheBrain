@@ -1,10 +1,8 @@
-console.log("A Light Snack script loaded");
-
-const gameplayArea = document.querySelector("section#gameplay-area");
+const gameplayArea = document.querySelector("section.gameplay-area");
 if (!gameplayArea) {
 	throw new Error("Gameplay area not found");
 }
-gameplayArea.insertAdjacentHTML("beforeend", `<canvas id="frog-canvas" class="main-canvas" />`);
+gameplayArea.insertAdjacentHTML("beforeend", `<canvas id="frog-canvas" class="main-canvas grayscale" />`);
 
 /** @type {HTMLCanvasElement} */
 const cnv = document.querySelector("canvas#frog-canvas");

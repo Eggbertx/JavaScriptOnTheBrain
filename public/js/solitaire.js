@@ -1,8 +1,8 @@
-const gameplayArea = document.querySelector("p:nth-of-type(2)");
+const gameplayArea = document.querySelector("section.gameplay-area");
 if (!gameplayArea) {
 	throw new Error("Gameplay area not found");
 }
-gameplayArea.insertAdjacentHTML("beforeend", `<canvas id="solitaire-canvas" class="main-canvas" style="display:block;align-content:center;" />`);
+gameplayArea.insertAdjacentHTML("beforeend", `<canvas id="solitaire-canvas" class="main-canvas" />`);
 
 /** @type {HTMLCanvasElement} */
 const cnv = document.querySelector("canvas#solitaire-canvas");

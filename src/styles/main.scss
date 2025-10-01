@@ -158,9 +158,8 @@ footer {
 	}
 }
 
-section#gameplay-area {
+section.gameplay-area {
 	width: 100%;
-	height: 100%;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -269,6 +268,11 @@ nav.game-links {
 
 .game-info.hlinks {
 	flex-direction: column;
+}
+
+.original-game-info p:first-child::before {
+	content: "Original description: ";
+	font-style: italic;
 }
 
 .date-line, .original-page {
