@@ -97,7 +97,7 @@ main, .page-title {
 }
 
 main {
-	padding: 0.5em;
+	padding: 0.5em 1em;
 }
 
 .page-title {
@@ -200,6 +200,7 @@ nav.game-links {
 	row-gap: 0.5em;
 	text-align: center;
 	align-self: center;
+	flex-direction: column;
 
 	.left-cap, .right-cap {
 		width: 20px;
@@ -262,12 +263,16 @@ nav.game-links {
 	filter: drop-shadow(0.75px 0.75px 0 black);
 }
 
-.game-info {
+.game-info.hlinks, .game-info.vlinks {
 	display:flex;
 }
 
 .game-info.hlinks {
 	flex-direction: column;
+}
+
+.game-info.vlinks {
+	flex-direction: row;
 }
 
 .original-game-info p:first-child::before {
@@ -278,4 +283,17 @@ nav.game-links {
 .date-line, .original-page {
 	text-align: center;
 	font-size: 0.75em;
+}
+
+.brain {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	margin-bottom: 2em;
+	h3 {
+		display: inline;
+	}
+	> div {
+		display: flex;
+		height: 78px;
+	}
 }
