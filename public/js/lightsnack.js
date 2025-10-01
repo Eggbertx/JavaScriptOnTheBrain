@@ -2,7 +2,7 @@ const gameplayArea = document.querySelector("section.gameplay-area");
 if (!gameplayArea) {
 	throw new Error("Gameplay area not found");
 }
-gameplayArea.insertAdjacentHTML("beforeend", `<canvas id="frog-canvas" class="main-canvas grayscale" />`);
+gameplayArea.insertAdjacentHTML("beforeend", `<canvas id="frog-canvas" class="main-canvas" />`);
 
 /** @type {HTMLCanvasElement} */
 const cnv = document.querySelector("canvas#frog-canvas");
