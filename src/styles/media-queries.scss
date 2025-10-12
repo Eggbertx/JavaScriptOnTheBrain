@@ -8,4 +8,8 @@
 	body {
 		font-size: 18px;
 	}
+
+	.gameplay-area canvas.main-canvas {
+		image-rendering: auto;
+	}
 }
