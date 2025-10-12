@@ -2,7 +2,7 @@ import path from "path";
 export const basePath = import.meta.env.BASE_PATH ?? "/JavaScriptOnTheBrain/";
 
 export function fixLinks(l: string) {
-	if(l.indexOf("://") >= 0) return l;
+	if(l.indexOf("://") >= 0 && l.indexOf("$BASE_PATH") < 0) return l;
 	return path.normalize(l.replaceAll("$BASE_PATH", basePath));
 }
 
