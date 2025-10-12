@@ -98,6 +98,11 @@ main, .page-title {
 
 main {
 	padding: 0.5em 1em;
+
+
+	> *:first-child {
+		margin-top: 0.5em;
+	}
 }
 
 .page-title {
@@ -121,12 +126,12 @@ a {
 	}
 }
 
-main > *:first-child {
-	margin-top: 0.5em;
-}
-
 .text-bold {
 	font-weight: bold;
+}
+
+.text-monospace {
+	font-family: monospace;
 }
 
 footer {

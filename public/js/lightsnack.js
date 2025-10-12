@@ -1,86 +1,162 @@
 const gameplayArea = document.querySelector("section.gameplay-area");
-if (!gameplayArea) {
+if(!gameplayArea) {
 	throw new Error("Gameplay area not found");
 }
 gameplayArea.insertAdjacentHTML("beforeend", `<canvas id="frog-canvas" class="main-canvas" />`);
 
 /** @type {HTMLCanvasElement} */
 const cnv = document.querySelector("canvas#frog-canvas");
-if (!cnv) {
+if(!cnv) {
 	throw new Error("Canvas element not found");
 }
-cnv.width = 400;
+cnv.width = 500;
 cnv.height = 60;
-
-const debug = window.debugGames || false;
 
 /** @type {CanvasRenderingContext2D} */
 const ctx = cnv.getContext("2d");
-if (!ctx) {
+if(!ctx) {
 	throw new Error("Canvas context not found");
 }
-ctx.imageSmoothingEnabled = false;
+// ctx.imageSmoothingEnabled = false;
 
-const faceFrames = [0, 1, 2, 3, 2, 1, 0];
+const headList = [0, 1, 2, 3, 2, 1, 0]; // frames used when not eating or tongue out
+let headcount = 0.0;
+let currHead = 0;
+
 let currentFrogFrame = 0;
 let frogFrameModulus = 5;
 
-const maxFlies = 5;
 const fliesSY = 220;
 const flyFrames = [
 	{sx: 2, sw: 9},
 	{sx: 13, sw: 13},
 	{sx: 30, sw: 9},
-]
+];
 const fliesSH = 8;
+
+const maxFlies = 5;
 const flies = [];
-let dangerX = 0; // (eatenX:dangerX] = frog animation starts to speed up
-let eatenX = 0; // [0:eatenX] = fly is eaten
-let eatingFly = -1; // index of the fly being eaten, -1 if none
+
+let nearX = 500;
+let nearY = 0;
+let nearNum = -1;
+
 let eatingFlySW = 0;
+let eatState = 0; // 0 = normal, 1 = tongue out, 2 = swallowing
 
-const frogBase = new Image();
-frogBase.onload = () => {
-	for(let i = 0; i < maxFlies; i++) {
-		flies.push({
-			x: randBetween(frogBase.width+40, cnv.width - 13*2),
-			y: randBetween(0, cnv.height - fliesSH),
-			beingEaten: false,
-		});
-	}
-	eatenX = frogBase.width + 30; // where the frog switches to eating animation and removes the fly
+let tongue = 0.0;
+let eatDx = 0, eatDy = 0;
+const tongues = [{x: 18, y: 27}, {x: 22, y: 28}, {x: 0, y: 0}, {x: 0, y: 0}];
+let counter = 0;
+
+const imageBase = new Image();
+imageBase.onload = () => {
+	eatenX = imageBase.width + 30; // where the frog switches to eating animation and removes the fly
 	dangerX = eatenX + 30; // where the frog's speed increases
-	setInterval(drawCanvas, 1000 / 20); // 5 FPS
+	setInterval(updateCanvas, 75);
+	for(let f = 0; f < maxFlies; f++) {
+		flies.push({x: 0, y: 0, oldX: 0, oldY: 0, baseX: 0, baseY: 0, dx: 0, dy: 0, alive: false});
+	}
 }
-if(window.JSOTB && window.JSOTB.basePath) {
-	console.log(`Setting frogBase.src to ${window.JSOTB.basePath}/img/froggies.png`);
-	frogBase.src = window.JSOTB.basePath + "/img/froggies.png";
-} else {
-	console.log("window.JSOTB not defined, using default path for frogBase.src");
-	frogBase.src = "/JavaScriptOnTheBrain/img/froggies.png";
-}
+imageBase.src = (window.JSOTB && window.JSOTB.basePath) ?
+	(window.JSOTB.basePath + "/img/froggies.png") :
+	"/JavaScriptOnTheBrain/img/froggies.png";
+console.log(`Loading frog image from ${imageBase.src}`);
 
 
-function randBetween(min, max) {
-	return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function debugFrame(x, y, w, h, strokeStyle, fillStyle = "", text = "") {
-	if(debug) {
-		ctx.strokeStyle = strokeStyle;
-		if(fillStyle != "")
-			ctx.fillStyle = fillStyle;
-		ctx.strokeRect(x, y, w, h);
-		if(fillStyle != "")
-			ctx.fillRect(x, y, w, h);
-		if(text) {
-			ctx.fillText(text, x + 2, y + 12);
+function updateCanvas() {
+	counter=(counter+1)% 30;
+	nearX=500;
+	nearY=0;
+	nearNum=-1;
+	for (let f = 0; f < 5; f++)
+	{
+		if(flies[f].alive) {
+			// Fly active?
+			flies[f].oldX = flies[f].x;
+			flies[f].oldY = flies[f].y;
+			if(counter==f)		// Pick new homing target
+				flies[f].baseX = Math.floor(100 + Math.random() * 400);
+			if(counter == (f+10))
+				flies[f].baseY = Math.floor(16 + Math.random() * 19);
+			if((flies[f].x < flies[f].baseX) && (flies[f].dx < 11)) // Accelerate
+				flies[f].dx+=2;
+			else if((flies[f].x > flies[f].baseX) && (flies[f].dx > -11))
+				flies[f].dx-=2;
+			if((flies[f].y < flies[f].baseY) && (flies[f].dy < 7))
+				flies[f].dy+=2;
+			else if((flies[f].y > flies[f].baseY) && (flies[f].dy > -7))
+				flies[f].dy -= 2;
+			flies[f].x += flies[f].dx; // Update location
+			flies[f].y += flies[f].dy;
+			if(flies[f].x < nearX) {
+				// See if this one is nearest to frog
+				nearX = flies[f].x;
+				nearY = flies[f].y;
+				nearNum = f;
+			}
+		}
+		else {
+			// Fly inactive?
+			if(Math.random()<0.01) // Start new one?
+			{
+				flies[f].x = 500;
+				flies[f].y = 25;
+				flies[f].baseY = 25;
+				flies[f].dx = 0;
+				flies[f].dy = 0;
+				flies[f].alive = true;
+			}
 		}
 	}
+	switch (eatState)
+	{
+		case 0: // Normal
+			headcount += 0.003 * (700 - nearX); // Breathe faster when fly is close
+			if(headcount > 12)
+				headcount -= 6;
+			currHead = headList[Math.floor(headcount) % 6];
+
+			if((nearX > 96) && (nearX < 130) && (nearY < 40) && (nearY > 6)) {
+				// Catch?
+				eatState = 1;
+				eatDx = nearX - 59;
+				eatDy = nearY - 22;
+				tongue = 1;
+				flies[nearNum].alive = false;
+				currHead = 4;
+			}
+			break;
+		case 1: // Tongue out
+			tongue = tongue - 0.3;
+			if(tongue < 0) {
+				eatState = 2;
+				headcount = 0;
+				currHead = 5;
+			}
+			break;
+		case 2: // Swallowing
+			headcount += 0.1;
+			if(headcount < 0.6)
+				currHead = 5;
+			else if(headcount < 3.3)
+				currHead = 6 + ((Math.floor(headcount * 2)) & 1);
+			else if(headcount < 4.4)
+				currHead = 5;
+			else
+				eatState = 0;
+			break;
+		default:
+			break;
+	}
+
+	drawCanvas();
 }
 
-function drawFrog(frame = -1) {
-	// frog base sprite
+function drawCanvas() {
+	ctx.clearRect(0, 0, cnv.width, cnv.height);
+
+	// draw the frog base sprite
 	let sx = 0;
 	let sy = 0;
 	let sw = 96;
@@ -89,123 +165,59 @@ function drawFrog(frame = -1) {
 	let dy = 0;
 	let dw = sw;
 	let dh = sh;
-	ctx.drawImage(frogBase, sx, sy, sw, sh, dx, dy, dw, dh);
-	debugFrame(dx, dy, dw, dh-4, "green", "");
-	if(frame < 0 || frame > 3) {
+	ctx.drawImage(imageBase, sx, sy, sw, sh, dx, dy, dw, dh);
+	
+	// frog face sprite
+	if(currHead < 0 || currHead >= 8) {
 		return; // no face sprite to draw
 	}
 
-	// frog face sprite
-	sx = (frame % 2 == 0)?0:frogBase.width / 2;
-	const syBase = (eatingFly > -1)?140:60;
-	sy = syBase + Math.floor(frame / 2) * 40; // 60 or 100 for normal, 140 or 180 for eating
-	sw = frogBase.width / 2;
+	sx = (currHead % 2 == 0)?0:imageBase.width / 2;
+	sy = 60 + Math.floor(currHead / 2) * 40; // 60, 60, 100, 100, 140, 140, 180, 180
+	sw = imageBase.width / 2;
 	sh = 40;
-	dx = 48;
-	dy = 0;
-	dw = sw;
-	dh = sh;
-	ctx.clearRect(dx, dy, sw, sh-6);
+	ctx.clearRect(48, 0, sw, sh - 6);
+	ctx.drawImage(imageBase, sx, sy, sw, sh, 48, 0, sw, sh);
 
-	// draw tongue if frog is eating a fly
-	if(eatingFly > -1 && flies[eatingFly]) {
-		const fly = flies[eatingFly];
-		// draw tongue as a line
-		ctx.strokeStyle = "red";
-		ctx.lineWidth = 2;
+	if(eatState == 1) {
+		// draw tongue
+		tongues[2].x = Math.floor(18 + tongue * eatDx);
+		tongues[2].y = Math.floor(27 + tongue * eatDy);
+		tongues[3].x = tongues[2].x;
+		tongues[3].y = Math.floor(25 + tongue * eatDy);
+		ctx.fillStyle = "#ff8080"; // original uses #ffafaf but it doesn't show up in grayscale
 		ctx.beginPath();
-		ctx.moveTo(frogBase.width-32, cnv.height / 3); // tongue goes to the left side of the canvas
-		ctx.lineTo(fly.x + eatingFlySW / 2, fly.y + fliesSH / 2);
-		ctx.stroke();
-	}
-
-	ctx.drawImage(frogBase, sx, sy, sw, sh, dx, dy, dw, dh);
-	debugFrame(dx, dy, dw, dh-4, "black", "", `Frame: ${frame}  (${sx},${sy})`);
-}
-
-function anyFliesInDangerZone() {
-	return flies.some(fly => fly && fly.x > eatenX && fly.x <= dangerX);
-}
-
-
-
-function drawFlies() {
-	for (const f in flies) {
-		const fly = flies[f];
-		if(!fly) continue; // fly is eaten
-		const frameIndex = Math.floor(Math.random() * flyFrames.length);
-		const sx = flyFrames[frameIndex].sx;
-		const sw = flyFrames[frameIndex].sw;
-		ctx.drawImage(frogBase, sx, fliesSY, sw, fliesSH, fly.x, fly.y, sw, fliesSH);
-
-		if(!fly.beingEaten) {
-			// if fly is being eaten, it is "stuck" until removed
-			// flies[f].x += randBetween(-8, 8);
-			flies[f].x += randBetween(-4, 2);
-			flies[f].y += randBetween(-2, 2);
+		ctx.moveTo(tongues[0].x + 42, tongues[0].y);
+		for (const te of tongues) {
+			ctx.lineTo(te.x + 42, te.y);
 		}
-
-		if(fly.x <= eatenX && eatingFly == -1) {
-			// frog is eating the fly, change the animation and reset the modulus
-			eatingFly = f;
-			eatingFlySW = sw;
-			flies[f].beingEaten = true;
-			currentFrogFrame = 0; // reset frog frame to start eating animation
-		}
-
-		// bounds checking
-		if (fly.x < 0)
-			flies[f].x = 0;
-		if (fly.x > cnv.width - sw)
-			flies[f].x = cnv.width - sw;
-		if (fly.y < 0)
-			flies[f].y = 0;
-		if (fly.y > cnv.height - fliesSH)
-			flies[f].y = cnv.height - fliesSH;
-
-		debugFrame(fly.x, fly.y, sw, fliesSH, "green", "", `Fly ${parseInt(f) + 1}`)
+		ctx.closePath();
+		ctx.fill();
+		
+		// captured fly
+		const flyDx = Math.floor(11 + tongue * eatDx) + 42;
+		const flyDy = Math.floor(25 + tongue * eatDy);
+		sx = flyFrames[0].sx;
+		sy = fliesSY;
+		sw = flyFrames[0].sw;
+		sh = fliesSH;
+		dx = flyDx + flyFrames[0].sw;
+		dy = flyDy - fliesSH / 2;
+		dw = sw;
+		dh = sh;
+		ctx.drawImage(imageBase, sx, sy, sw, sh, dx, dy, dw, dh);
 	}
-}
-
-let frameCount = 0;
-function drawCanvas() {
-	ctx.clearRect(0, 0, cnv.width, cnv.height); // clear the canvas
-	if((frameCount++ % frogFrameModulus) == 0) {
-		if(currentFrogFrame++ >= faceFrames.length) {
-			if(eatingFly > -1) {
-				// reset eating animation
-				currentFrogFrame = 0;
-				flies[eatingFly] = null;
-				eatingFly = -1; // reset eating fly
-			}
-			currentFrogFrame = 0;
-		}
-		if(currentFrogFrame == 1) {
-			// mouth closed, remove fly
-			flies[eatingFly] = null;
-		}
-	}
-	let someFliesInDangerZone = anyFliesInDangerZone();
-
-	if(eatingFly > -1) {
-		frogFrameModulus = 10;
-	} else if(someFliesInDangerZone) {
-		frogFrameModulus = 2;
-	} else {
-		frogFrameModulus = 5;
-	}
-
-	if(debug) {
-		ctx.strokeStyle = "green";
-		ctx.strokeText(`Modulus: ${frogFrameModulus}, eatingFly: ${eatingFly}`, cnv.width/2 - 32, cnv.height-4);
-
-		// draw "danger zone", where the frog's speed increases but the fly is still "alive"
-		debugFrame(eatenX, 0, dangerX - eatenX, cnv.height, "orange", "", `Danger Zone: ${eatenX} to ${dangerX}`);
-
-		// draw "eaten zone", where the frog switches to eating animation and removes the fly
-		debugFrame(0, 0, eatenX, cnv.height, "red", "", `Eaten Zone: 0 to ${eatenX}`);
-	}
-	let frameIndex = faceFrames[currentFrogFrame];
-	drawFrog(frameIndex);
-	drawFlies();
+	flies.filter(f => f.alive).forEach(fly => {
+		// draw flies
+		const flyFrame = flyFrames[counter & 1];
+		sx = flyFrame.sx;
+		sy = fliesSY;
+		sw = flyFrame.sw;
+		sh = fliesSH;
+		dx = Math.floor(fly.x);
+		dy = Math.floor(fly.y);
+		dw = sw;
+		dh = sh;
+		ctx.drawImage(imageBase, sx, sy, sw, sh, dx, dy, dw, dh);
+	});
 }
