@@ -36,10 +36,10 @@
     <p>To scramble the cube, press the S key. To reset it, press the R key. This will reset the cube to its "solved" state, but it won't reset its rotation.</p>
   gameLinks:
     - {text: Other games, href: $BASE_PATH/games, icon: mlist.png}
-    - {text: History, href: "#", icon: mhistory.png}
-    - {text: Technical stuff, href: "#", icon: mtechnical.png}
-    - {text: Reactions, href: "#", icon: mreactions.png}
-    - {text: Download, href: "#", icon: mdownload.png}
+    - {text: History, href: "http://www.javaonthebrain.com/java/rubik/about.html", icon: mhistory.png}
+    - {text: Technical stuff, href: "http://www.javaonthebrain.com/java/rubik/technical.html", icon: mtechnical.png}
+    - {text: Reactions, href: "http://www.javaonthebrain.com/java/rubik/reactions.html", icon: mreactions.png}
+    - {text: Download, href: "http://www.javaonthebrain.com/java/download.html", icon: mdownload.png}
   gameLinksHorizontal: false
 - name: A Light Snack
   link: games/frog

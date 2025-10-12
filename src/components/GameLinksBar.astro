@@ -11,7 +11,7 @@ const navClass = isHorizontal ? "game-links links-horizontal" : "game-links link
 <nav class={navClass}>
 	<div class={isHorizontal ? "left-cap" : "top-cap"}></div>{isHorizontal && <div class="link-spacer"></div>}
 	{gameLinks.map((link) => (
-		<a class="link-icon" href={fixLinks(link.href)} title={link.text}>
+		<a class="link-icon" href={fixLinks(link.href)} title={link.text} {...(link.href.startsWith("http") ? { target: "_blank"} : {})}>
 			<img class="link-icon" src={prependBasePath("img", link.icon)} alt={link.text} />
 		</a>
 		<a class="link-text" href={fixLinks(link.href)}>{link.text}</a>
