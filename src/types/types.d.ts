@@ -1,6 +1,7 @@
 interface GameListItem {
 	name: string;
 	link: string;
+	icon?: "apple"|"apple-coming-soon";
 	originalDate?: string;
 	shortDesc: string;
 	newShortDesc?: string;
