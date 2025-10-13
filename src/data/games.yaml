@@ -31,7 +31,7 @@
     <p>More than 13 years after this project, I built a similar cube for the iPhone. Not as a standard application, but as a web app -- out of JavaScript and WebKit style extensions -- just to see if it could be done. And it could. The following link won't work in a browser, but it should run fine on your iPhone or iPod Touch:</p>
     <p><a href="http://www.javaonthebrain.com/iphone/cube">http://www.javaonthebrain.com/iphone/cube</a></p>
   newGamePageDescriptionHTML: |
-    <p>This is an implementation of a Rubik's Cube in JavaScript, using <a href="https://threejs.org/">Three.js</a> to handle 3D rendering. To rotate the cube, right-click and drag. To rotate a single row/column, left-click on one of them and drag.</p>
+    <p>This is an implementation of a Rubik's Cube in JavaScript, using <a href="https://threejs.org/" target="_blank">Three.js</a> to handle 3D rendering. To rotate the cube, right-click and drag. To rotate a single row/column, left-click on one of them and drag.</p>
     <p>As with my implementation of <a href="$BASE_PATH/games/frog">A Light Snack</a>, a background color can be set using CSS. Currently, the cube's colors are hardcoded, but I would eventually like to make those configurable.</p>
     <p>To scramble the cube, press the S key. To reset it, press the R key. This will reset the cube to its "solved" state, but it won't reset its rotation.</p>
   gameLinks:
