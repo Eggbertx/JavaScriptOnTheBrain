@@ -1,5 +1,5 @@
 import {
-	BoxGeometry, LinearFilter, Mesh, MeshBasicMaterial, Object3D, PerspectiveCamera, Raycaster, Scene,
+	BoxGeometry, Group, LinearFilter, Matrix4, Mesh, MeshBasicMaterial, Object3D, PerspectiveCamera, Raycaster, Scene,
 	TextureLoader, Vector3, WebGLRenderer
 } from "three";
 
@@ -37,13 +37,6 @@ const MATERIAL_YELLOW = new MeshBasicMaterial({color: "#ffff72", map: texture});
 const MATERIAL_BLUE = new MeshBasicMaterial({color: "#7272ff", map: texture});
 const MATERIAL_WHITE = new MeshBasicMaterial({color: "#ffffff", map: texture});
 
-const FACE_RIGHT = 0;
-const FACE_LEFT = 1;
-const FACE_TOP = 2;
-const FACE_BOTTOM = 3;
-const FACE_FRONT = 4;
-const FACE_BACK = 5;
-
 function rotateAboutPoint(obj, point, axis, theta, pointIsWorld = true) {
 	if(pointIsWorld) {
 		obj.parent.localToWorld(obj.position);
@@ -57,77 +50,36 @@ function rotateAboutPoint(obj, point, axis, theta, pointIsWorld = true) {
 	obj.rotateOnAxis(axis, theta);
 }
 
-
-function generateCubeMaterials(x, y, z) {
-	const materials = [
-		MATERIAL_GREEN,
-		MATERIAL_ORANGE,
-		MATERIAL_RED,
-		MATERIAL_YELLOW,
-		MATERIAL_BLUE,
-		MATERIAL_WHITE
-	];
-	if(x === 1) {
-		materials[FACE_LEFT] = MATERIAL_BLACK;
-	} else {
-		materials[FACE_RIGHT] = MATERIAL_BLACK;
-	}
-	if(y === 1) {
-		materials[FACE_BOTTOM] = MATERIAL_BLACK;
-	} else {
-		materials[FACE_TOP] = MATERIAL_BLACK;
-	}
-	if(z === 1) {
-		materials[FACE_BACK] = MATERIAL_BLACK;
-	} else {
-		materials[FACE_FRONT] = MATERIAL_BLACK;
-	}
-	return materials;
-}
-
 function addCube(x, y, z) {
 	const geometry = new BoxGeometry(1, 1, 1);
-	const materials = generateCubeMaterials(x, y, z);
+	const materials = [
+		(x < 1)?MATERIAL_BLACK:MATERIAL_GREEN,
+		(x > -1)?MATERIAL_BLACK:MATERIAL_ORANGE,
+		(y < 1)?MATERIAL_BLACK:MATERIAL_RED,
+		(y > -1)?MATERIAL_BLACK:MATERIAL_YELLOW,
+		(z < 1)?MATERIAL_BLACK:MATERIAL_BLUE,
+		(z > -1)?MATERIAL_BLACK:MATERIAL_WHITE
+	];
 	const cube = new Mesh(geometry, materials);
-	// materials.
-	// if(y === 0) {
-	// 	cube.material[FACE_TOP] = material_black;
-	// }
 	cube.position.set(x, y, z);
 	scene.add(cube);
 	return cube;
 }
 
-class PickHelper {
-	constructor() {
-		this.raycaster = new Raycaster();
-		this.pickedObject = null;
-		this.pickedObjectSavedColor = 0;
-	}
-	pick( normalizedPosition, scene, camera, time ) {
-		// restore the color if there is a picked object
-		if(this.pickedObject ) {
-			// this.pickedObject.material.emissive.setHex( this.pickedObjectSavedColor );
-			this.pickedObject = undefined;
-		}
+const rayCaster = new Raycaster();
+let pickedObject = null;
+const pickPosition = { x: 0, y: 0 };
 
-		// cast a ray through the frustum
-		this.raycaster.setFromCamera( normalizedPosition, camera );
-		// get the list of objects the ray intersected
-		const intersectedObjects = this.raycaster.intersectObjects( scene.children );
-		if( intersectedObjects.length ) {
-			// pick the first object. It's the closest one
-			this.pickedObject = intersectedObjects[ 0 ].object;
-			// save its color
-			// this.pickedObjectSavedColor = this.pickedObject.material.emissive.getHex();
-			// set its emissive color to flashing red/yellow
-			// this.pickedObject.material.emissive.setHex( ( time * 8 ) % 2 > 1 ? 0xFFFF00 : 0xFF0000 );
-		}
+function pickObject(normalizedPosition) {
+	// cast a ray through the frustum
+	rayCaster.setFromCamera(normalizedPosition, camera);
+
+	const intersectedObjects = rayCaster.intersectObjects(scene.children);
+	if(intersectedObjects.length) {
+		// pick the closest object
+		pickedObject = intersectedObjects[0].object;
 	}
 }
-
-const pickPosition = { x: 0, y: 0 };
-const pickHelper = new PickHelper();
 
 function getCanvasRelativePosition( event ) {
 	const rect = cnv.getBoundingClientRect();
@@ -137,10 +89,10 @@ function getCanvasRelativePosition( event ) {
 	};
 }
 
-function setPickPosition( event ) {
-	const pos = getCanvasRelativePosition( event );
-	pickPosition.x = ( pos.x / cnv.width ) * 2 - 1;
-	pickPosition.y = ( pos.y / cnv.height ) * - 2 + 1; // note we flip Y
+function setPickPosition(event) {
+	const pos = getCanvasRelativePosition(event);
+	pickPosition.x = (pos.x / cnv.width) * 2 - 1;
+	pickPosition.y = (pos.y / cnv.height) * -2 + 1; // note we flip Y
 }
 
 function clearPickPosition() {
@@ -148,7 +100,6 @@ function clearPickPosition() {
 	// to stop picking. For now we just pick a value unlikely to pick something
 	pickPosition.x = - 100000;
 	pickPosition.y = - 100000;
-	cubes.map(c => c.material.opacity = 1);
 }
 
 const cubes = [];
@@ -179,13 +130,28 @@ function rotateMatchingCubes(matcher, axis, angle) {
 	}
 }
 
-const objRotateAll = new Object3D();
-const objFront = new Object3D();
-const objBack = new Object3D();
-const objTop = new Object3D();
-const objBottom = new Object3D();
-const objLeft = new Object3D();
-const objRight = new Object3D();
+function preserveWorldTransform(object, newParent) {
+	// Save world transform
+	object.updateMatrixWorld(true);
+	const worldMatrix = object.matrixWorld.clone();
+
+	// Reparent
+	newParent.add(object);
+
+	// Apply old world transform relative to new parent
+	newParent.updateMatrixWorld(true);
+	const parentInverse = new Matrix4().copy(newParent.matrixWorld).invert();
+	object.matrix.copy(parentInverse.multiply(worldMatrix));
+	object.matrix.decompose(object.position, object.quaternion, object.scale);
+}
+
+const objRotateAll = new Group();
+const objFront = new Group();
+const objBack = new Group();
+const objTop = new Group();
+const objBottom = new Group();
+const objLeft = new Group();
+const objRight = new Group();
 
 window.onload = function() {
 	scene.add(objRotateAll);
@@ -214,8 +180,7 @@ window.onload = function() {
 			}
 		}
 	}
-	renderer.setAnimationLoop((time) => {
-		pickHelper.pick( pickPosition, scene, camera, time );
+	renderer.setAnimationLoop(() => {
 		renderer.render(scene, camera);
 	});
 }
@@ -273,18 +238,14 @@ const mouseState = {
 	lastX: -1,
 	lastY: -1,
 	dx: 0,
-	dy: 0
+	dy: 0,
+	matcher: null // function to match cubes for rotation
 };
 cnv.addEventListener("mousedown", function(e) {
 	if(e.button === 0) {
 		mouseState.left = true;
 		setPickPosition(e);
-		if(pickHelper.pickedObject) {
-			scene.remove(pickHelper.pickedObject);
-			// console.log(pickHelper.pickedObject)
-			// console.log(pickHelper.pickedObject.position);
-			// console.log(pickHelper.pickedObject.rotation);
-		}
+		pickObject(pickPosition);
 	} else if(e.button === 1 || e.button === 2) {
 		mouseState.middleRight = true;
 	}
@@ -297,27 +258,50 @@ window.addEventListener("mousemove", function(e) {
 	mouseState.y = e.y;
 	mouseState.dx = mouseState.x - mouseState.lastX;
 	mouseState.dy = mouseState.y - mouseState.lastY;
-	// console.log(`dx: ${mouseState.dx}, dy: ${mouseState.dy}`);
-
 	if(mouseState.middleRight && mouseState.lastX >= 0 && mouseState.lastY >= 0) {
 		const axis = new Vector3(mouseState.dy, mouseState.dx, 0);
 		axis.normalize();
 		objRotateAll.rotation.x += mouseState.dy * 0.01;
 		objRotateAll.rotation.y += mouseState.dx * 0.01;
+	} else if(mouseState.left && pickedObject) {
+		const pos = pickedObject.position;
+		if(mouseState.dx != 0) {
+			 if(pos.x === -1) {
+				mouseState.matcher = xLeftMatcher;
+				const matched = xLeftMatcher();
+				matched.map(m => preserveWorldTransform(m, objLeft));
+				objLeft.rotation.x += mouseState.dy * 0.01;
+			} else if(pos.x === 1) {
+				mouseState.matcher = xRightMatcher;
+				const matched = xRightMatcher();
+				matched.map(m => preserveWorldTransform(m, objRight));
+				objRight.rotation.x += mouseState.dy * 0.01;
+			} else if(pos.y === 1) {
+				mouseState.matcher = yTopMatcher;
+				const matched = yTopMatcher();
+				matched.map(m => preserveWorldTransform(m, objTop));
+				objTop.rotation.y += mouseState.dx * 0.01;
+			} else if(pos.y === -1) {
+				mouseState.matcher = yBottomMatcher;
+				const matched = yBottomMatcher();
+				matched.map(m => preserveWorldTransform(m, objBottom));
+				objBottom.rotation.y += mouseState.dx * 0.01;
+			}
+		}
 	}
-	setPickPosition(e);
+	// setPickPosition(e);
 });
-
 
 ["mouseleave", "mouseout", "mouseup"].map(eType => {
 	window.addEventListener(eType, e => {
 		if(e.type === "mouseup") {
 			clearPickPosition();
-		}
-		if(e.button === 0) {
-			mouseState.left = false;
-		} else if(e.button === 1 || e.button === 2) {
-			mouseState.middleRight = false;
+			mouseState.matcher = null;
+			if(e.button === 0) {
+				mouseState.left = false;
+			} else if(e.button === 1 || e.button === 2) {
+				mouseState.middleRight = false;
+			}
 		}
 	});
 });
