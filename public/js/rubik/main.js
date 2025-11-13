@@ -104,26 +104,24 @@ function clearPickPosition() {
 
 const cubes = [];
 
-function rotateWholeCube(axis, angle) {
-	rotateMatchingCubes(null, axis, angle);
-}
+const posRange = 0.1;
+const yTopMatcher = () => cubes.filter(c => c.position.y > (1 - posRange));
+const yMiddleMatcher = () => cubes.filter(c => c.position.y >= -posRange && c.position.y <= posRange);
+const yBottomMatcher = () => cubes.filter(c => c.position.y < (-1 + posRange));
+const xLeftMatcher = () => cubes.filter(c => c.position.x < (-1 + posRange));
+const xMiddleMatcher = () => cubes.filter(c => c.position.x >= -posRange && c.position.x <= posRange);
+const xRightMatcher = () => cubes.filter(c => c.position.x > (1 - posRange));
+const zFrontMatcher = () => cubes.filter(c => c.position.z > (1 - posRange));
+const zMiddleMatcher = () => cubes.filter(c => c.position.z >= -posRange && c.position.z <= posRange);
+const zBackMatcher = () => cubes.filter(c => c.position.z < (-1 + posRange));
 
-const yTopMatcher = () => scene.getObjectsByProperty("yPos", 1);
-const yMiddleMatcher = () => scene.getObjectsByProperty("yPos", 0);
-const yBottomMatcher = () => scene.getObjectsByProperty("yPos", -1);
-const xLeftMatcher = () => scene.getObjectsByProperty("xPos", -1);
-const xMiddleMatcher = () => scene.getObjectsByProperty("xPos", 0);
-const xRightMatcher = () => scene.getObjectsByProperty("xPos", 1);
-const zFrontMatcher = () => scene.getObjectsByProperty("zPos", 1);
-const zMiddleMatcher = () => scene.getObjectsByProperty("zPos", 0);
-const zBackMatcher = () => scene.getObjectsByProperty("zPos", -1);
 function rotateMatchingCubes(matcher, axis, angle) {
 	let matched = matcher?matcher():cubes;
 	if(!matched || matched.length === 0) {
 		throw new Error("No cubes matched for rotation");
 	}
-	if(matched.length < 8) {
-		throw new Error(`Invalid number of cubes matched for rotation (expected at least 8, got ${matched.length})`);
+	if(matched.length != 9) {
+		return;
 	}
 	for(const c in matched) {
 		rotateAboutPoint(matched[c], origin, axis, angle, true);
@@ -145,7 +143,6 @@ function preserveWorldTransform(object, newParent) {
 	object.matrix.decompose(object.position, object.quaternion, object.scale);
 }
 
-const objRotateAll = new Group();
 const objFront = new Group();
 const objBack = new Group();
 const objTop = new Group();
@@ -154,13 +151,12 @@ const objLeft = new Group();
 const objRight = new Group();
 
 window.onload = function() {
-	scene.add(objRotateAll);
-	objRotateAll.add(objFront);
-	objRotateAll.add(objBack);
-	objRotateAll.add(objTop);
-	objRotateAll.add(objBottom);
-	objRotateAll.add(objLeft);
-	objRotateAll.add(objRight);
+	scene.add(objFront);
+	scene.add(objBack);
+	scene.add(objTop);
+	scene.add(objBottom);
+	scene.add(objLeft);
+	scene.add(objRight);
 
 	camera.position.z = 4;
 	const renderer = new WebGLRenderer({canvas: cnv, alpha: true});
@@ -171,10 +167,9 @@ window.onload = function() {
 			for(let x = -1; x <= 1; x++) {
 				if(x !== 0 || y !== 0 || z !== 0) {
 					let cube = addCube(x, y, z);
-					cube.xPos = x; // used for grouping cubes
+					cube.xPos = x; // used for position reset
 					cube.yPos = y;
 					cube.zPos = z;
-					cube.parent = objRotateAll;
 					cubes.push(cube);
 				}
 			}
@@ -188,6 +183,22 @@ window.onload = function() {
 
 const keyState = { r: false, s: false };
 
+function resetCube(resetCamera = true) {
+	for (let c in cubes) {
+		preserveWorldTransform(cubes[c], scene);
+		cubes[c].position.set(cubes[c].xPos, cubes[c].yPos, cubes[c].zPos);
+		cubes[c].rotation.set(0, 0, 0);
+	}
+	if(resetCamera) {
+		camera.position.set(0, 0, 4);
+		camera.lookAt(origin);
+	}
+}
+
+function randInt(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 window.addEventListener("keydown", function(event) {
 	switch(event.key) {
 		case "r":
@@ -195,23 +206,27 @@ window.addEventListener("keydown", function(event) {
 			if (!keyState.r) {
 				keyState.r = true;
 				console.log("Resetting cube rotation");
-				for (let c in cubes) {
-					cubes[c].position.set(cubes[c].xPos, cubes[c].yPos, cubes[c].zPos);
-					cubes[c].rotation.set(0, 0, 0);
-				}
+				resetCube();
 			}
 			break;
 		case "s":
 		case "S":
 			if(!keyState.s) {
-				console.log("Spinning cube");
-				let vector = new Vector3(1, 0, 0);
-				vector.normalize();
 				keyState.s = true;
-				rotateMatchingCubes(yMiddleMatcher, vector, Math.PI / 2);
-				for(const cube of cubes) {
-					
-				}
+				console.log("Scrambling cube");
+				resetCube(false);
+				const rotationInterval = Math.PI / 2; // 90 degrees * random number of spins
+				rotateMatchingCubes(xLeftMatcher, AXIS_X, rotationInterval * randInt(0, 3));
+				rotateMatchingCubes(xMiddleMatcher, AXIS_X, rotationInterval * randInt(0, 3));
+				rotateMatchingCubes(xRightMatcher, AXIS_X, rotationInterval * randInt(0, 3));
+
+				// TODO: fix weird rotation issues when rotating on more than one axis
+				rotateMatchingCubes(yTopMatcher, AXIS_Y, rotationInterval * randInt(0, 3));
+				rotateMatchingCubes(yMiddleMatcher, AXIS_Y, rotationInterval * randInt(0, 3));
+				rotateMatchingCubes(yBottomMatcher, AXIS_Y, rotationInterval * randInt(0, 3));
+				rotateMatchingCubes(zFrontMatcher, AXIS_Z, rotationInterval * randInt(0, 3));
+				rotateMatchingCubes(zMiddleMatcher, AXIS_Z, rotationInterval * randInt(0, 3));
+				rotateMatchingCubes(zBackMatcher, AXIS_Z, rotationInterval * randInt(0, 3));
 			}
 			break;
 	}
@@ -259,29 +274,31 @@ window.addEventListener("mousemove", function(e) {
 	mouseState.dx = mouseState.x - mouseState.lastX;
 	mouseState.dy = mouseState.y - mouseState.lastY;
 	if(mouseState.middleRight && mouseState.lastX >= 0 && mouseState.lastY >= 0) {
-		const axis = new Vector3(mouseState.dy, mouseState.dx, 0);
-		axis.normalize();
-		objRotateAll.rotation.x += mouseState.dy * 0.01;
-		objRotateAll.rotation.y += mouseState.dx * 0.01;
+		// rotate camera around cube
+		const theta = Math.sqrt(mouseState.dx * mouseState.dx + mouseState.dy * mouseState.dy) * -0.01;
+		const axis = new Vector3(mouseState.dy, mouseState.dx, 0).normalize();
+		camera.position.applyAxisAngle(axis, theta);
+		camera.lookAt(origin);
 	} else if(mouseState.left && pickedObject) {
 		const pos = pickedObject.position;
+		const isMovingVertically = Math.abs(mouseState.dy) > Math.abs(mouseState.dx);
 		if(mouseState.dx != 0) {
-			 if(pos.x === -1) {
+			 if(pos.x === -1 && isMovingVertically) {
 				mouseState.matcher = xLeftMatcher;
 				const matched = xLeftMatcher();
 				matched.map(m => preserveWorldTransform(m, objLeft));
 				objLeft.rotation.x += mouseState.dy * 0.01;
-			} else if(pos.x === 1) {
+			} else if(pos.x === 1 && isMovingVertically) {
 				mouseState.matcher = xRightMatcher;
 				const matched = xRightMatcher();
 				matched.map(m => preserveWorldTransform(m, objRight));
 				objRight.rotation.x += mouseState.dy * 0.01;
-			} else if(pos.y === 1) {
+			} else if(pos.y === 1 && !isMovingVertically) {
 				mouseState.matcher = yTopMatcher;
 				const matched = yTopMatcher();
 				matched.map(m => preserveWorldTransform(m, objTop));
 				objTop.rotation.y += mouseState.dx * 0.01;
-			} else if(pos.y === -1) {
+			} else if(pos.y === -1 && !isMovingVertically) {
 				mouseState.matcher = yBottomMatcher;
 				const matched = yBottomMatcher();
 				matched.map(m => preserveWorldTransform(m, objBottom));
@@ -289,19 +306,18 @@ window.addEventListener("mousemove", function(e) {
 			}
 		}
 	}
-	// setPickPosition(e);
 });
 
 ["mouseleave", "mouseout", "mouseup"].map(eType => {
 	window.addEventListener(eType, e => {
 		if(e.type === "mouseup") {
 			clearPickPosition();
-			mouseState.matcher = null;
 			if(e.button === 0) {
 				mouseState.left = false;
 			} else if(e.button === 1 || e.button === 2) {
 				mouseState.middleRight = false;
 			}
+			mouseState.matcher = null;
 		}
 	});
 });
