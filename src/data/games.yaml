@@ -21,7 +21,7 @@
   newShortDesc: A 3D implementation of Rubik's Cube. Middle click and drag to rotate the cube. Left click and drag on a row or column to rotate it. Press the S key to randomize the cube and R to reset it.
   noStaticGameplayArea: true
   gameScripts:
-    - {src: /js/rubik/main.js, defer: true, type: "module"}
+    - {src: /js/rubik.js, defer: true, type: "module"}
   importMap:
     three: "https://unpkg.com/three/build/three.module.js"
     three/addons/: "https://unpkg.com/three/examples/jsm/"
