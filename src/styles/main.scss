@@ -193,7 +193,6 @@ nav.game-links {
 	}
 	.link-icon {
 		background-color: $dark-gray;
-		filter: drop-shadow(0.75px 1px 0 black);
 	}
 	span {
 		vertical-align: 50%;
@@ -208,6 +207,9 @@ nav.game-links {
 	align-self: center;
 	flex-direction: column;
 
+	.link-icon {
+		filter: drop-shadow(0px 0.75px 0 black);
+	}
 	.left-cap, .right-cap {
 		width: 20px;
 		background-color: $dark-gray;
@@ -245,6 +247,9 @@ nav.game-links {
 
 	.link-icon, .top-cap {
 		grid-column: 1;
+	}
+	.link-icon {
+		filter: drop-shadow(0.75px 1px 0 black)
 	}
 	.link-text {
 		grid-column: 2;
