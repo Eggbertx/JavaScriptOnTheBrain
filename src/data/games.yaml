@@ -52,3 +52,16 @@
     <p><a href="$BASE_PATH/js/lightsnack.js">Here</a> is the source code and <a href="$BASE_PATH/img/froggies.png">here</a> is the image data.</p>
   gameScripts:
     - {src: /js/lightsnack.js, defer: true}
+- name: Iceblox
+  link: games/iceblox
+  originalDate: April 8, 1996
+  shortDesc: my first "real" computer game in Java. I stole most of the ideas from a popular early eighties arcade game called "Pengo". Fairly enjoyable, though somewhat sluggish.
+  gamePageDescriptionHTML: ""
+  gameScripts:
+    - {src: /js/iceblox.js, defer: true}
+  gameLinks:
+    - {text: Other games, href: $BASE_PATH/games, icon: mlist.png}
+    - {text: History, href: "http://www.javaonthebrain.com/java/iceblox/about.html", icon: mhistory.png}
+    - {text: Ingredients, href: "http://www.javaonthebrain.com/java/iceblox/ingredients.html", icon: bingredients.png}
+    - {text: Download, href: "http://www.javaonthebrain.com/java/download.html", icon: mdownload.png}
+  gameLinksHorizontal: true
