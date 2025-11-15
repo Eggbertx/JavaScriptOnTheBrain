@@ -1,6 +1,6 @@
 import {
-	BoxGeometry, Group, LinearFilter, Matrix4, Mesh, MeshBasicMaterial, Object3D, PerspectiveCamera, Raycaster, Scene,
-	TextureLoader, Vector3, WebGLRenderer
+	BoxGeometry, Group, LinearFilter, Matrix4, Mesh, MeshBasicMaterial, PerspectiveCamera, Raycaster, Scene,
+	Spherical, TextureLoader, Vector3, WebGLRenderer
 } from "three";
 
 const gameplayArea = document.querySelector("section.game-info p:first-child");
@@ -28,6 +28,7 @@ texture.minFilter = LinearFilter;
 
 const scene = new Scene();
 const camera = new PerspectiveCamera(80, cnv.width / cnv.height, 0.1, 1000);
+const cameraOrbit = new Spherical();
 
 const MATERIAL_BLACK = new MeshBasicMaterial({color: "#000000"});
 const MATERIAL_GREEN = new MeshBasicMaterial({color: "#72ff72", map: texture});
@@ -275,9 +276,11 @@ window.addEventListener("mousemove", function(e) {
 	mouseState.dy = mouseState.y - mouseState.lastY;
 	if(mouseState.middleRight && mouseState.lastX >= 0 && mouseState.lastY >= 0) {
 		// rotate camera around cube
-		const theta = Math.sqrt(mouseState.dx * mouseState.dx + mouseState.dy * mouseState.dy) * -0.01;
-		const axis = new Vector3(mouseState.dy, mouseState.dx, 0).normalize();
-		camera.position.applyAxisAngle(axis, theta);
+		cameraOrbit.setFromVector3(camera.position);
+		cameraOrbit.theta -= mouseState.dx * 0.01;
+		cameraOrbit.phi -= mouseState.dy * 0.01;
+
+		camera.position.setFromSpherical(cameraOrbit);
 		camera.lookAt(origin);
 	} else if(mouseState.left && pickedObject) {
 		const pos = pickedObject.position;
