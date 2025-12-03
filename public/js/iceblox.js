@@ -20,7 +20,7 @@ console.log(`Loading base image from ${imageBase.src}`);
 
 const STATE_INTRO = 0;
 const STATE_GAME = 3;
-const STATE_PREP_LEVEL = 4;
+const STATE_WIN_LEVEL = 4;
 const STATE_DEAD = 5;
 
 const FRAME_PENGUIN_HAPPY1 = 0;
@@ -36,7 +36,7 @@ const FRAME_PENGUIN_W3 = 9;
 const FRAME_PENGUIN_E1 = 10;
 const FRAME_PENGUIN_E2 = 11;
 const FRAME_PENGUIN_E3 = 12;
-const FRAME_PENGUIN_E_SMALL = 13;
+const FRAME_PENGUIN_LIVES_ICON = 13;
 const FRAME_ROCK = 14;
 const FRAME_COIN = 15;
 const FRAME_ICE1 = 16;
@@ -72,8 +72,35 @@ const FRAME_PENGUIN_DEAD6 = 45;
 const FRAME_PENGUIN_DEAD7 = 46;
 const FRAME_PENGUIN_DEAD8 = 47;
 
+const DIRECTION_NORTH = 0;
+const DIRECTION_EAST = 1;
+const DIRECTION_SOUTH = 2;
+const DIRECTION_WEST = 3;
+
+const ACTION_WAIT = 0;
+const ACTION_MOVE_NORTH = 1;
+const ACTION_MOVE_EAST = 2;
+const ACTION_MOVE_SOUTH = 3;
+const ACTION_MOVE_WEST = 4;
+
 const FIELD_Y = 18;
 const FIELD_HEIGHT = cnv.height - FIELD_Y;
+const CELLS_X = Math.floor(cnv.width/30);
+const CELLS_Y = Math.floor(FIELD_HEIGHT/30);
+
+const maxLevelBuild = 6;
+const levelCounts = new Array(maxLevelBuild).fill(null).map((_, i) => {
+	return {
+		flame: 2 + i % 3,
+		rock: i + 5,
+		ice: 35 - i * 2,
+		speed: (i < 3)?3:5
+	}
+});
+/** @type {LevelObject[]} */
+const levelObjects = [];
+const playArea = new Array((CELLS_X + 2) * (CELLS_Y + 3));
+
 
 const keys = {
 	space: false,
@@ -88,8 +115,101 @@ let frameCounter = 0;
 let fieldMask = cnv.width/2; // when levelMask > 0, the UI is drawn and the level "opens up", levelMask decrements each frame and is reset on level start
 let deadFrame = -1; // if < 0, player is alive
 let winFrame = -1; // if > 0, drawFrame(winFrame++, playerX, playerY);
-let playerX = 0;
-let playerY = 0;
+let level = 1;
+let score = 0;
+let lives = 3;
+
+class LevelObject {
+	get cellX() {
+		return Math.floor(this.x / 30);
+	}
+	get cellY() {
+		return Math.floor(this.y / 30);
+	}
+	get onCell() {
+		return this.x % 30 === 0 && this.y % 30 === 0
+	}
+	constructor(frame, x, y) {
+		this.frame = frame;
+		this.x = x;
+		this.y = y; // pixel position below FIELD_Y
+		this.isMoving = false;
+		this.animOffset = randInt(1, 5);
+		this.speed = 3;
+		this.action = ACTION_WAIT;
+	}
+	update() {
+		if(this.frame === FRAME_ROCK) return;
+		if(this.isMoving) {
+			if(this.onCell) {
+				this.isMoving = false;
+				this.action = ACTION_WAIT;
+			}
+		}
+	}
+	draw() {
+		if(this.frame >= FRAME_BADDIE1 && this.frame <= FRAME_BADDIE5) {
+			drawBaddie(this.x, FIELD_Y + this.y, this.animOffset);
+		} else {
+			drawFrame(this.frame, this.x, FIELD_Y + this.y);
+		}
+	}
+}
+
+class PlayerObject extends LevelObject {
+	constructor(frame, x, y) {
+		super(frame, x, y);
+	}
+	update() {
+		super.update();
+		if(this.onCell) {
+			if(keys.up && this.y > 0 && playArea[this.cellX + CELLS_X * (this.cellY - 1)] === 255) {
+				this.isMoving = true;
+				this.y -= this.speed;
+				this.frame = FRAME_PENGUIN_N1;
+			} else if(keys.down && this.cellY < CELLS_Y-1 && playArea[this.cellX + CELLS_X * (this.cellY + 1)] === 255) {
+				this.isMoving = true;
+				this.y += this.speed;
+				this.frame = FRAME_PENGUIN_S1;
+			} else if(keys.left && this.x > 0 && playArea[(this.cellX - 1) + CELLS_X * this.cellY] === 255) {
+				this.isMoving = true;
+				this.x -= this.speed;
+				this.frame = FRAME_PENGUIN_W1;
+			} else if(keys.right && this.cellX < CELLS_X-1 && playArea[(this.cellX + 1) + CELLS_X * this.cellY] === 255) {
+				this.isMoving = true;
+				this.x += this.speed;
+				this.frame = FRAME_PENGUIN_E1;
+			} else {
+				this.isMoving = false;
+			}
+		}
+		if(this.isMoving) {
+			if(this.frame >= FRAME_PENGUIN_N1 && this.frame <= FRAME_PENGUIN_N3) {
+				this.y -= this.speed;
+			} else if(this.frame >= FRAME_PENGUIN_S1 && this.frame <= FRAME_PENGUIN_S3) {
+				this.y += this.speed;
+			} if(this.frame >= FRAME_PENGUIN_W1 && this.frame <= FRAME_PENGUIN_W3) {
+				this.x -= this.speed;
+			} if(this.frame >= FRAME_PENGUIN_E1 && this.frame <= FRAME_PENGUIN_E3) {
+				this.x += this.speed;
+			}
+		}
+	}
+	draw() {
+		if(!this.onCell) {
+			if(this.frame >= FRAME_PENGUIN_N1 && this.frame <= FRAME_PENGUIN_N3) {
+				if(++this.frame > FRAME_PENGUIN_N3) this.frame = FRAME_PENGUIN_N1;
+			} else if(this.frame >= FRAME_PENGUIN_S1 && this.frame <= FRAME_PENGUIN_S3) {
+				if(++this.frame > FRAME_PENGUIN_S3) this.frame = FRAME_PENGUIN_S1;
+			} if(this.frame >= FRAME_PENGUIN_W1 && this.frame <= FRAME_PENGUIN_W3) {
+				if(++this.frame > FRAME_PENGUIN_W3) this.frame = FRAME_PENGUIN_W1;
+			} if(this.frame >= FRAME_PENGUIN_E1 && this.frame <= FRAME_PENGUIN_E3) {
+				if(++this.frame > FRAME_PENGUIN_E3) this.frame = FRAME_PENGUIN_E1;
+			}
+		}
+		drawFrame(this.frame, this.x, this.y + FIELD_Y);
+	}
+}
 
 function doIntro() {
 	ctx.drawImage(imageBase, 0, 179,240, 65, (cnv.width-240)/2, 10, 240, 65);
@@ -114,7 +234,7 @@ function doIntro() {
 		ctx.fillText("Frozen gold coin", 180, 290);
 	} else if(frameCounter < 140) {
 		ctx.fillText("HOW TO PLAY", (cnv.width - ctx.measureText("HOW TO PLAY").width)/2, 97);
-		drawFrame(frameCounter % FRAME_PENGUIN_E_SMALL, 140, 110);
+		drawFrame(frameCounter % FRAME_PENGUIN_LIVES_ICON, 140, 110);
 		ctx.fillText("Move up, down, left and right", 180, 122);
 		ctx.fillText("with the arrow keys or WASD", 180, 137);
 
@@ -183,6 +303,73 @@ function doIntro() {
 	ctx.fillText("Press SPACE to start", (cnv.width - ctx.measureText("Press SPACE to start").width)/2, 330);
 	if(keys.space) {
 		currentState = STATE_GAME;
+		buildField();
+	}
+}
+
+function buildField() {
+	playArea.fill(255);
+	const levelI = ((level >= maxLevelBuild)?maxLevelBuild:level) - 1;
+	const stack = new Array(CELLS_X * CELLS_Y).fill(0);
+	while(levelObjects.length > 0)
+		levelObjects.pop();
+	levelObjects.push(new PlayerObject(FRAME_PENGUIN_S2, 0, 0));
+
+	let rocks = levelCounts[levelI].rock;
+	let ice = levelCounts[levelI].ice;
+	let notDone = true;
+	let p = 0, q = 1;
+	while(notDone) {
+		for(let y = 1; y <= CELLS_Y; y++) {
+			for(let x = 1; x <= CELLS_X; x++) {
+				playArea[y * (CELLS_X + 2) + x] = 0;
+			}
+		}
+		playArea[CELLS_X + 3]= -1;
+		notDone = false;
+		let i = 0;
+		let j = 5 + ice + rocks;
+		while(i < j) {
+			p = 1 + Math.floor(Math.random() * CELLS_X);
+			q = 1 + Math.floor(Math.random() * CELLS_Y);
+			if(playArea[q * (CELLS_X + 2) + p] === 0) {
+				let item = 0;
+				if(i < 5) item = 10; // frozen coin
+				else if(i < ice + 5) item = 2; // ice cube
+				else item = 1; // rock
+				playArea[q * (CELLS_X + 2) + p] = item;
+				i++;
+			}
+		}
+		playArea[CELLS_X+3]=0; // Clear start square
+		p = 0;
+		q = 1;
+		i = 0;
+		stack[0] = CELLS_X + 3;
+		while(p < q) {
+			const j = stack[p++];
+			if((playArea[j - CELLS_X - 2] & 17) == 0) {
+				stack[q] = j - CELLS_X - 2;
+				if(playArea[stack[q]] == 10) i++;
+				playArea[stack[q++]] |= 16;
+			}
+			if((playArea[j + CELLS_X + 2] & 17) == 0) {
+				stack[q]=j + CELLS_X + 2;
+				if(playArea[stack[q]] == 10) i++;
+				playArea[stack[q++]]|=16;
+			}
+			if((playArea[j - 1] & 17) == 0) {
+				stack[q] = j - 1;
+				if(playArea[stack[q]] == 10) i++;
+				playArea[stack[q++]] |= 16;
+			}
+			if((playArea[j+1] & 17) == 0) {
+				stack[q] = j + 1;
+				if(playArea[stack[q]] == 10) i++;
+				playArea[stack[q++]] |= 16;
+			}
+		}
+		notDone = i < 5;
 	}
 }
 
@@ -204,13 +391,19 @@ function drawFrame(frame, x, y) {
 }
 
 function drawUI() {
+	ctx.fillStyle = "white";
+	ctx.fillText(`SCORE: ${score}`, 4, 12);
+	ctx.fillText(`LEVEL: ${level}`, 125, 12);
+	ctx.fillText("SPARE LIVES:", 220, 12);
+	for(let i = 0; i < lives; i++) {
+		drawFrame(FRAME_PENGUIN_LIVES_ICON, 290 + i * 15, -16)
+	}
+
 	ctx.fillStyle = ctx.createLinearGradient(0, FIELD_Y-4, 0, FIELD_Y)
 	ctx.fillStyle.addColorStop(0, "white");
 	ctx.fillStyle.addColorStop(1, "black");
 	ctx.fillRect(0, FIELD_Y - 4, cnv.width, 4);
-}
 
-function drawField() {
 	if(fieldMask > 0) {
 		fieldMask -= 6;
 		ctx.fillStyle = "black";
@@ -218,21 +411,52 @@ function drawField() {
 		ctx.fillRect(cnv.width - fieldMask, FIELD_Y, cnv.width - fieldMask, FIELD_HEIGHT); // right mask
 		ctx.fillRect(0, cnv.height - fieldMask, cnv.width, FIELD_Y + fieldMask);
 		ctx.fillRect(0, FIELD_Y, cnv.width, fieldMask); // top mask
+		if(fieldMask < 0) fieldMask = 0;
+	}
+}
+
+function drawField() {
+	for(let y = 0; y < CELLS_Y; y++) {
+		for(let x = 0; x < CELLS_X; x++) {
+			const p = (y + 1) * (CELLS_X + 2) + x + 1;
+			playArea[p] &= 15;
+			let frame = -1;
+			switch(playArea[p]) {
+				case 1:
+					frame = FRAME_ROCK;
+					break;
+				case 2:
+					frame = FRAME_ICE1;
+					break;
+				case 10:
+					frame = FRAME_ICE_COIN1;
+					break;
+			}
+			if(frame > 0) {
+				drawFrame(frame, x * 30, FIELD_Y + y * 30);
+			}
+		}
 	}
 }
 
 function updateKeyState(key, down) {
-	switch(key) {
-		case "ArrowUp":
+	switch(key.toLowerCase()) {
+		case "arrowup":
+		case "w":
+		case "k":
 			keys.up = down;
 			break;
-		case "ArrowDown":
+		case "arrowdown":
+		case "s":
+		case "m":
 			keys.down = down;
 			break;
-		case "ArrowRight":
+		case "arrowright":
+		case "d":
 			keys.right = down;
 			break;
-		case "ArrowLeft":
+		case "arrowleft":
+		case "a":
 			keys.left = down;
 			break;
 		case " ":
@@ -278,10 +502,20 @@ function gameLoop() {
 			doIntro();
 			break;
 		case STATE_GAME:
-		case STATE_DEAD:
-		case STATE_PREP_LEVEL:
-			drawUI();
 			drawField();
+			for(const obj of levelObjects) {
+				if(obj) {
+					obj.update();
+					obj.draw();
+				}
+			}
+			drawUI();
+			break;
+		case STATE_DEAD:
+		case STATE_WIN_LEVEL:
+			drawField();
+			levelObjects[0].draw();
+			drawUI();
 			break;
 	}
 	frameCounter++;
